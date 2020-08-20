@@ -1,5 +1,5 @@
 # Elastic stack (ELK) on Docker
-$ cd docker-elk
+$ source .env
 $ docker-compose up -d
 
 说明
