@@ -1,11 +1,13 @@
 # Elastic stack (ELK) on Docker
-```$ source .env
+```
+$ source .env
 $ docker-compose up -d
 ```
 ## 说明
 Kibana的web入口：
 `http://localhost:5601`
-该elk栈的默认端口为：
+
+该elk栈的默认端口：
 * 5000: Logstash TCP input.
 * 9200: Elasticsearch HTTP
 * 9300: Elasticsearch TCP transport
@@ -46,20 +48,20 @@ $ docker stack deploy -c docker-stack.yml elk
 * [ls-security](https://www.elastic.co/guide/en/logstash/current/ls-security.html)
 * [sec-tutorial](https://www.elastic.co/guide/en/elasticsearch/reference/current/security-getting-started.html)
 
-[connect-kibana](https://www.elastic.co/guide/en/kibana/current/connect-to-elasticsearch.html)
-[index-pattern](https://www.elastic.co/guide/en/kibana/current/index-patterns.html)
+* [connect-kibana](https://www.elastic.co/guide/en/kibana/current/connect-to-elasticsearch.html)
+* [index-pattern](https://www.elastic.co/guide/en/kibana/current/index-patterns.html)
 
-[config-es](./elasticsearch/config/elasticsearch.yml)
-[config-kbn](./kibana/config/kibana.yml)
-[config-ls](./logstash/config/logstash.yml)
+* [config-es](./elasticsearch/config/elasticsearch.yml)
+* [config-kbn](./kibana/config/kibana.yml)
+* [config-ls](./logstash/config/logstash.yml)
 
-[es-docker](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
-[kbn-docker](https://www.elastic.co/guide/en/kibana/current/docker.html)
-[ls-docker](https://www.elastic.co/guide/en/logstash/current/docker-config.html)
+* [es-docker](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
+* [kbn-docker](https://www.elastic.co/guide/en/kibana/current/docker.html)
+* [ls-docker](https://www.elastic.co/guide/en/logstash/current/docker-config.html)
 
-[log4j-props](https://github.com/elastic/logstash/tree/7.6/docker/data/logstash/config)
-[esuser](https://github.com/elastic/elasticsearch/blob/7.6/distribution/docker/src/docker/Dockerfile#L23-L24)
+* [log4j-props](https://github.com/elastic/logstash/tree/7.6/docker/data/logstash/config)
+* [esuser](https://github.com/elastic/elasticsearch/blob/7.6/distribution/docker/src/docker/Dockerfile#L23-L24)
 
-[upgrade](https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-upgrade.html)
+* [upgrade](https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-upgrade.html)
 
-[swarm-mode](https://docs.docker.com/engine/swarm/)
+* [swarm-mode](https://docs.docker.com/engine/swarm/)
