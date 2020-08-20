@@ -1,7 +1,7 @@
 # ELK具体安装过程如下
 
 * [1. 安装 JDK](#1.安装JDK)
-* [2. [安装 Elasticsearch](#2.安装Elasticsearch)
+* [2. 安装 Elasticsearch](#2.安装Elasticsearch)
 * [3. 安装 Kibana](#3.安装Kibana)
 * [4. 安装 Nginx](#4.安装Nginx)
 * [5. 安装 Logstash](#5.安装Logstash)
