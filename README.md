@@ -3,6 +3,9 @@
 简单说明下本次日志采集方案，将节点的日志内容通过 filebeat 或其他工具送到redis消息队列，然后使用 logstash 单机／集群读取消息队列的内容，根据配置文件进行过滤。然后将过滤后的文件输送到elasticsearch中，通过kibana去展示。
 
 # ELK结构框架
+Logstash 基本组成
+
+![](https://developer.ibm.com/developer/articles/os-cn-elk/nl/zh/images/img004.png)
 
 这里选择ELK+Redis的方式进行部署，下面简单记录下ELK结合Redis搭建日志分析平台的集群环境部署过程，大致的架构如下：
 
@@ -106,4 +109,6 @@ $ docker stack deploy -c docker-stack.yml elk
 * [config-es](./elasticsearch/config/elasticsearch.yml)
 * [config-kbn](./kibana/config/kibana.yml)
 * [config-ls](./logstash/config/logstash.yml)
+* [ELK搭建篇](https://www.cnblogs.com/cheyunhua/p/11238489.html)
+* [集中式日志系统 ELK 协议栈详解](https://developer.ibm.com/zh/articles/os-cn-elk/)
 
