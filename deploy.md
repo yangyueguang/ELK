@@ -4,8 +4,8 @@
 * [2. 安装 Elasticsearch](#2.安装Elasticsearch)
 * [3. 安装 Kibana](#3.安装Kibana)
 * [4. 安装 Nginx](#4.安装Nginx)
-* [5. 安装 Logstash](#5.安装Logstash)
-* [6. 配置 Logstash](#6.配置Logstash)
+* [5. 安装 Logstash](#安装Logstash)
+* [6. 配置 Logstash](#配置Logstash)
 * [7. 安装 Logstash-forwarder](#7.安装Logstash-forwarder)
 * [8. 最终验证](#8.最终验证)
 
@@ -57,7 +57,7 @@ _network.host: localhost_
 }
 ```
 
-##3.安装Kibana
+## 3.安装Kibana
 `wget https://download.elastic.co/kibana/kibana/kibana-4.3.0-linux-x64.tar.gz`
 `tar xzvf kibana-4.3.0-linux-x64.tar.gz`
 `pwd`
@@ -104,7 +104,7 @@ server {
 `sudo systemctl start nginx`
 `http://FQDN 或者 http://IP`
 
-## 5.安装Logstash
+## 安装Logstash
 `wget https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz`
 `tar xzvf logstash-2.1.1.tar.gz`
 `pwd`
@@ -114,7 +114,7 @@ _bin CHANGELOG.md CONTRIBUTORS Gemfile Gemfile.jruby-1.9.lock lib LICENSE NOTICE
 `cd bin`
 `./logstash -e 'input { stdin { } } output { stdout {} }'`
 
-## 6.配置Logstash
+## 配置Logstash
 ```log
 input {
 }
