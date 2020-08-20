@@ -111,7 +111,8 @@ http://FQDN 或者 http://IP
 ```
 
 ## 安装Logstash
-```wget https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz
+```
+wget https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz
 tar xzvf logstash-2.1.1.tar.gz
 pwd
 "/home/elk/logstash-2.1.1_"
@@ -152,24 +153,24 @@ vi simple.conf
 
 ```log
 input {
- lumberjack {
- port => 5043
- type => "logs"
- ssl_certificate => "/etc/pki/tls/certs/logstash-forwarder.crt"
- ssl_key => "/etc/pki/tls/private/logstash-forwarder.key"
- }
+    lumberjack {
+        port => 5043
+        type => "logs"
+        ssl_certificate => "/etc/pki/tls/certs/logstash-forwarder.crt"
+        ssl_key => "/etc/pki/tls/private/logstash-forwarder.key"
+    }
 }
 filter {
- grok {
- match => { "message" => "%{COMBINEDAPACHELOG}" }
- }
- date {
- match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
- }
+    grok {
+        match => { "message" => "%{COMBINEDAPACHELOG}" }
+    }
+    date {
+        match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
+    }
 }
 output {
- elasticsearch { hosts => ["localhost:9200"] }
- stdout { codec => rubydebug }
+    elasticsearch { hosts => ["localhost:9200"] }
+    stdout { codec => rubydebug }
 }
 ```
 启动 Logstsh
@@ -191,7 +192,8 @@ sudo openssl req -config /etc/pki/tls/openssl.cnf -x509 -days 3650 -batch -nodes
 
 ## 安装Logstash-forwarder
 配置 Logstash-forwarder 安装源
-```rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch
+```
+rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch
 vi /etc/yum.repos.d/logstash-forwarder.repo```
 加入以下内容：
 ```log
@@ -204,6 +206,26 @@ enabled=1
 ```
 `yum -y install logstash-forwarder`
 
+## 安装Filebeat
+```bash
+wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.8.0-darwin-x86_64.tar.gz
+tar -xzvf filebeat-7.8.0-darwin-x86_64.tar.gz
+cd filebeat-7.8.0-darwin-x86_64/
+```
+修改filebeat.yml
+```bash
+output.elasticsearch:
+  hosts: ["<es_url>"]
+  username: "elastic"
+  password: "changeme"
+setup.kibana:
+  host: "<kibana_url>"
+```
+```bash
+./filebeat modules enable elasticsearch
+./filebeat setup
+./filebeat -e
+```
 ## 最后验证
 `open http://IP:5601`
 
