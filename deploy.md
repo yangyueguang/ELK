@@ -9,7 +9,7 @@
 * [7. 安装 Logstash-forwarder](#7.安装Logstash-forwarder)
 * [8. 最终验证](#8.最终验证)
 
-## 1.安装JDK
+##安装JDK
 `vi /etc/yum.repos.d/centos.repo` 添加如下:
 ```bash
 [base]
@@ -29,7 +29,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 `yum install java-1.8.0-openjdk`
 `java -version`
 
-## 2.安装Elasticsearch
+## 安装Elasticsearch
 `wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.1.0/elasticsearch-2.1.0.tar.gz`
 `tar xzvf elasticsearch-2.1.0.tar.gz`
 `pwd`
@@ -57,7 +57,7 @@ _network.host: localhost_
 }
 ```
 
-## 3.安装Kibana
+##3.安装Kibana
 `wget https://download.elastic.co/kibana/kibana/kibana-4.3.0-linux-x64.tar.gz`
 `tar xzvf kibana-4.3.0-linux-x64.tar.gz`
 `pwd`
