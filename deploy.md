@@ -1,15 +1,15 @@
 # ELK具体安装过程如下
 
-* [1. 安装 JDK](#1.安装JDK)
-* [2. 安装 Elasticsearch](#2.安装Elasticsearch)
-* [3. 安装 Kibana](#3.安装Kibana)
-* [4. 安装 Nginx](#4.安装Nginx)
+* [1. 安装 JDK](#安装JDK)
+* [2. 安装 Elasticsearch](#安装Elasticsearch)
+* [3. 安装 Kibana](#安装Kibana)
+* [4. 安装 Nginx](#安装Nginx)
 * [5. 安装 Logstash](#安装Logstash)
 * [6. 配置 Logstash](#配置Logstash)
-* [7. 安装 Logstash-forwarder](#7.安装Logstash-forwarder)
-* [8. 最终验证](#8.最终验证)
+* [7. 安装 Logstash-forwarder](#安装Logstash-forwarder)
+* [8. 最终验证](#最终验证)
 
-##安装JDK
+## 安装JDK
 `vi /etc/yum.repos.d/centos.repo` 添加如下:
 ```bash
 [base]
@@ -57,7 +57,7 @@ _network.host: localhost_
 }
 ```
 
-## 3.安装Kibana
+## 安装Kibana
 `wget https://download.elastic.co/kibana/kibana/kibana-4.3.0-linux-x64.tar.gz`
 `tar xzvf kibana-4.3.0-linux-x64.tar.gz`
 `pwd`
@@ -70,7 +70,7 @@ _server.host:"localhost”_
 `../bin/kibana`
 `curl localhost:5601`
 
-## 4.安装Nginx
+## 安装Nginx
 `vi /etc/yum.repos.d/nginx.repo`
 ```
 [nginx]
@@ -175,7 +175,7 @@ _subjectAltName = IP: logstash_server_ip_
 `sudo openssl req -config /etc/pki/tls/openssl.cnf -x509 -days 3650 -batch -nodes -newkey
          rsa:2048 -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt`
 
-## 7.安装Logstash-forwarder
+## 安装Logstash-forwarder
 配置 Logstash-forwarder 安装源
 `rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch`
 `vi /etc/yum.repos.d/logstash-forwarder.repo`
@@ -190,7 +190,7 @@ enabled=1
 ```
 `yum -y install logstash-forwarder`
 
-## 8.最后验证
+## 最后验证
 `open http://IP:5601`
 
 
