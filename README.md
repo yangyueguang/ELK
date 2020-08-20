@@ -32,36 +32,7 @@ $ docker stack deploy -c docker-stack.yml elk
 ```
 
 * [elk-stack](https://www.elastic.co/elk-stack)
-* [stack-features](https://www.elastic.co/products/stack)
-* [paid-features](https://www.elastic.co/subscriptions)
-* [trial-license](https://www.elastic.co/guide/en/elasticsearch/reference/current/license-settings.html)
-
-* [linux-postinstall](https://docs.docker.com/install/linux/linux-postinstall/)
-
-* [booststap-checks](https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html)
-* [es-sys-config](https://www.elastic.co/guide/en/elasticsearch/reference/current/system-config.html)
-
-* [win-shareddrives](https://docs.docker.com/docker-for-windows/#shared-drives)
-* [mac-mounts](https://docs.docker.com/docker-for-mac/osxfs/)
-
-* [builtin-users](https://www.elastic.co/guide/en/elasticsearch/reference/current/built-in-users.html)
-* [ls-security](https://www.elastic.co/guide/en/logstash/current/ls-security.html)
-* [sec-tutorial](https://www.elastic.co/guide/en/elasticsearch/reference/current/security-getting-started.html)
-
-* [connect-kibana](https://www.elastic.co/guide/en/kibana/current/connect-to-elasticsearch.html)
-* [index-pattern](https://www.elastic.co/guide/en/kibana/current/index-patterns.html)
-
 * [config-es](./elasticsearch/config/elasticsearch.yml)
 * [config-kbn](./kibana/config/kibana.yml)
 * [config-ls](./logstash/config/logstash.yml)
 
-* [es-docker](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
-* [kbn-docker](https://www.elastic.co/guide/en/kibana/current/docker.html)
-* [ls-docker](https://www.elastic.co/guide/en/logstash/current/docker-config.html)
-
-* [log4j-props](https://github.com/elastic/logstash/tree/7.6/docker/data/logstash/config)
-* [esuser](https://github.com/elastic/elasticsearch/blob/7.6/distribution/docker/src/docker/Dockerfile#L23-L24)
-
-* [upgrade](https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-upgrade.html)
-
-* [swarm-mode](https://docs.docker.com/engine/swarm/)
