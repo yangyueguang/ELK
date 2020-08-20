@@ -37,15 +37,15 @@ wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/
 tar xzvf elasticsearch-2.1.0.tar.gz
 pwd
 ```
-_/home/elk/elasticsearch-2.1.0_ 
-`ls`
-_bin config lib LICENSE.txt NOTICE.txt README.textile_ 
-`cd config` 
-`vi elasticsearch.yml` 
-找到network.host一行，修改成以下： 
-_network.host: localhost_ 
-``../bin/elasticsearch` 
-`curl 'localhost:9200/'` 
+_/home/elk/elasticsearch-2.1.0_  
+`ls`  
+_bin config lib LICENSE.txt NOTICE.txt README.textile_  
+`cd config`  
+`vi elasticsearch.yml`  
+找到network.host一行，修改成以下：  
+_network.host: localhost_  
+``../bin/elasticsearch`  
+`curl 'localhost:9200/'`  
 ```bash
 {
     "name" : "Surge",
