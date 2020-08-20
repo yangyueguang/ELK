@@ -26,22 +26,26 @@ mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 ```
-`yum install java-1.8.0-openjdk`
-`java -version`
+```
+yum install java-1.8.0-openjdk
+java -version
+```
 
 ## 安装Elasticsearch
-`wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.1.0/elasticsearch-2.1.0.tar.gz`
-`tar xzvf elasticsearch-2.1.0.tar.gz`
-`pwd`
-_/home/elk/elasticsearch-2.1.0_
+```
+wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.1.0/elasticsearch-2.1.0.tar.gz
+tar xzvf elasticsearch-2.1.0.tar.gz
+pwd
+```
+_/home/elk/elasticsearch-2.1.0_ 
 `ls`
-_bin config lib LICENSE.txt NOTICE.txt README.textile_
-`cd config`
-`vi elasticsearch.yml`
-找到network.host一行，修改成以下：
-_network.host: localhost_
-``../bin/elasticsearch`
-`curl 'localhost:9200/'`
+_bin config lib LICENSE.txt NOTICE.txt README.textile_ 
+`cd config` 
+`vi elasticsearch.yml` 
+找到network.host一行，修改成以下： 
+_network.host: localhost_ 
+``../bin/elasticsearch` 
+`curl 'localhost:9200/'` 
 ```bash
 {
     "name" : "Surge",
@@ -58,17 +62,17 @@ _network.host: localhost_
 ```
 
 ## 安装Kibana
-`wget https://download.elastic.co/kibana/kibana/kibana-4.3.0-linux-x64.tar.gz`
-`tar xzvf kibana-4.3.0-linux-x64.tar.gz`
-`pwd`
-_/home/elk/kibana-4.3.0-linux-x64_
-`ls`
-_bin config installedPlugins LICENSE.txt node node_modules optimize package.json README.txt src webpackShims_
-`cd config`
-`vi kibana.yml`
-_server.host:"localhost”_
-`../bin/kibana`
-`curl localhost:5601`
+`wget https://download.elastic.co/kibana/kibana/kibana-4.3.0-linux-x64.tar.gz` 
+`tar xzvf kibana-4.3.0-linux-x64.tar.gz` 
+`pwd` 
+_/home/elk/kibana-4.3.0-linux-x64_ 
+`ls` 
+_bin config installedPlugins LICENSE.txt node node_modules optimize package.json README.txt src webpackShims_ 
+`cd config` 
+`vi kibana.yml` 
+_server.host:"localhost”_ 
+`../bin/kibana` 
+`curl localhost:5601` 
 
 ## 安装Nginx
 `vi /etc/yum.repos.d/nginx.repo`
