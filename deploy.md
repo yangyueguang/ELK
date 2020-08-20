@@ -44,7 +44,7 @@ _bin config lib LICENSE.txt NOTICE.txt README.textile_
 `vi elasticsearch.yml`  
 找到network.host一行，修改成以下：  
 _network.host: localhost_  
-``../bin/elasticsearch`  
+`../bin/elasticsearch`  
 `curl 'localhost:9200/'`  
 ```bash
 {
@@ -62,20 +62,20 @@ _network.host: localhost_
 ```
 
 ## 安装Kibana
-`wget https://download.elastic.co/kibana/kibana/kibana-4.3.0-linux-x64.tar.gz` 
-`tar xzvf kibana-4.3.0-linux-x64.tar.gz` 
-`pwd` 
-_/home/elk/kibana-4.3.0-linux-x64_ 
-`ls` 
-_bin config installedPlugins LICENSE.txt node node_modules optimize package.json README.txt src webpackShims_ 
-`cd config` 
-`vi kibana.yml` 
-_server.host:"localhost”_ 
-`../bin/kibana` 
-`curl localhost:5601` 
+`wget https://download.elastic.co/kibana/kibana/kibana-4.3.0-linux-x64.tar.gz`  
+`tar xzvf kibana-4.3.0-linux-x64.tar.gz`  
+`pwd`  
+_/home/elk/kibana-4.3.0-linux-x64_  
+`ls`  
+_bin config installedPlugins LICENSE.txt node node_modules optimize package.json README.txt src webpackShims_  
+`cd config`  
+`vi kibana.yml`  
+_server.host:"localhost”_  
+`../bin/kibana`  
+`curl localhost:5601`  
 
 ## 安装Nginx
-`vi /etc/yum.repos.d/nginx.repo`
+`vi /etc/yum.repos.d/nginx.repo`  
 ```
 [nginx]
 name=nginx repo
@@ -83,10 +83,10 @@ baseurl=http://nginx.org/packages/centos/7/$basearch/
 gpgcheck=0
 enabled=1
 ```
-`yum install nginx httpd-tools`
-`vi /etc/nginx/nginx.conf`
-_include /etc/nginx/conf.d/*conf_
-`vi /etc/nginx/conf.d/kibana.conf`
+`yum install nginx httpd-tools`  
+`vi /etc/nginx/nginx.conf`  
+_include /etc/nginx/conf.d/*conf_  
+`vi /etc/nginx/conf.d/kibana.conf`  
 ```log
 server {
  listen 80;
@@ -103,20 +103,23 @@ server {
  }
 ｝
 ```
-启动 Nginx 服务
-`sudo systemctl enable nginx`
-`sudo systemctl start nginx`
-`http://FQDN 或者 http://IP`
+启动 Nginx 服务  
+```
+sudo systemctl enable nginx
+sudo systemctl start nginx
+http://FQDN 或者 http://IP
+```
 
 ## 安装Logstash
-`wget https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz`
-`tar xzvf logstash-2.1.1.tar.gz`
-`pwd`
-_/home/elk/logstash-2.1.1_
-`ls`
-_bin CHANGELOG.md CONTRIBUTORS Gemfile Gemfile.jruby-1.9.lock lib LICENSE NOTICE.TXT vendor_
-`cd bin`
-`./logstash -e 'input { stdin { } } output { stdout {} }'`
+```wget https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz
+tar xzvf logstash-2.1.1.tar.gz
+pwd
+"/home/elk/logstash-2.1.1_"
+ls
+"bin CHANGELOG.md CONTRIBUTORS Gemfile Gemfile.jruby-1.9.lock lib LICENSE NOTICE.TXT vendor"
+cd bin
+./logstash -e 'input { stdin { } } output { stdout {} }'
+```
 
 ## 配置Logstash
 ```log
@@ -129,21 +132,24 @@ output {
 ```
 
 配置 SSL
-`mkdir -p /etc/pki/tls/certs etc/pki/tls/private`
-`vi /etc/ssl/openssl.cnf`
+```
+mkdir -p /etc/pki/tls/certs etc/pki/tls/private
+vi /etc/ssl/openssl.cnf
 找到 [v3_ca] 段，添加下面一行，保存退出。
-_subjectAltName = IP: logstash_server_ip_
-`cd /etc/pki/tls`
-`sudo openssl req -config /etc/ssl/openssl.cnf -x509 -days 3650 -batch -nodes -newkey rsa:2048 -keyout
-         private/logstash-forwarder.key -out certs/logstash-forwarder.crt`
+"subjectAltName = IP: logstash_server_ip"
+cd /etc/pki/tls
+sudo openssl req -config /etc/ssl/openssl.cnf -x509 -days 3650 -batch -nodes -newkey rsa:2048 -keyout
+         private/logstash-forwarder.key -out certs/logstash-forwarder.crt
+```
 
-这里产生的 logstash-forwarder.crt 文件会在下一节安装配置 Logstash-forwarder 的时候使用到。
+这里产生的 logstash-forwarder.crt 文件会在下一节安装配置 Logstash-forwarder 的时候使用到。  
+配置 Logstash 管道文件  
+```
+cd /home/elk/logstash-2.1.1
+mkdir conf
+vi simple.conf
+```
 
-配置 Logstash 管道文件
-
-`cd /home/elk/logstash-2.1.1`
-`mkdir conf`
-`vi simple.conf`
 ```log
 input {
  lumberjack {
@@ -167,22 +173,26 @@ output {
 }
 ```
 启动 Logstsh
-`cd /home/elk/logstash-2.1.1/bin`
-`./logstash -f ../conf/simple.conf`
+```
+cd /home/elk/logstash-2.1.1/bin
+./logstash -f ../conf/simple.conf
+```
 
 
 在 CentOS 7.1 上配置 Logstash，只有一步配置 SSL 是稍微有点不同，其他全部一样。
-`vi /etc/pki/tls/openssl.cnf`
+```
+vi /etc/pki/tls/openssl.cnf
 找到 [v3_ca] 段，添加下面一行，保存退出。
-_subjectAltName = IP: logstash_server_ip_
-`cd /etc/pki/tls`
-`sudo openssl req -config /etc/pki/tls/openssl.cnf -x509 -days 3650 -batch -nodes -newkey
-         rsa:2048 -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt`
+"subjectAltName = IP: logstash_server_ip"
+cd /etc/pki/tls`
+sudo openssl req -config /etc/pki/tls/openssl.cnf -x509 -days 3650 -batch -nodes -newkey
+         rsa:2048 -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt
+```
 
 ## 安装Logstash-forwarder
 配置 Logstash-forwarder 安装源
-`rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch`
-`vi /etc/yum.repos.d/logstash-forwarder.repo`
+```rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch
+vi /etc/yum.repos.d/logstash-forwarder.repo```
 加入以下内容：
 ```log
 [logstash-forwarder]
