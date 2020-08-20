@@ -1,15 +1,15 @@
 # ELK具体安装过程如下
 
 * [1. 安装 JDK](#1.安装JDK)
-* [2. [安装 Elasticsearch](#2. 安装 Elasticsearch)
-* [3. 安装 Kibana](#3. 安装 Kibana)
-* [4. 安装 Nginx](#4. 安装 Nginx)
-* [5. 安装 Logstash](#5. 安装 Logstash)
-* [6. 配置 Logstash](#6. 配置 Logstash)
-* [7. 安装 Logstash-forwarder](#7. 安装 Logstash-forwarder)
-* [8. 最终验证](#8. 最终验证)
+* [2. [安装 Elasticsearch](#2.安装Elasticsearch)
+* [3. 安装 Kibana](#3.安装Kibana)
+* [4. 安装 Nginx](#4.安装Nginx)
+* [5. 安装 Logstash](#5.安装Logstash)
+* [6. 配置 Logstash](#6.配置Logstash)
+* [7. 安装 Logstash-forwarder](#7.安装Logstash-forwarder)
+* [8. 最终验证](#8.最终验证)
 
-## 1. 安装 JDK
+## 1.安装JDK
 `vi /etc/yum.repos.d/centos.repo` 添加如下:
 ```bash
 [base]
@@ -29,7 +29,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 `yum install java-1.8.0-openjdk`
 `java -version`
 
-## 2. 安装 Elasticsearch
+## 2.安装Elasticsearch
 `wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.1.0/elasticsearch-2.1.0.tar.gz`
 `tar xzvf elasticsearch-2.1.0.tar.gz`
 `pwd`
@@ -57,7 +57,7 @@ _network.host: localhost_
 }
 ```
 
-## 3. 安装 Kibana
+## 3.安装Kibana
 `wget https://download.elastic.co/kibana/kibana/kibana-4.3.0-linux-x64.tar.gz`
 `tar xzvf kibana-4.3.0-linux-x64.tar.gz`
 `pwd`
@@ -70,7 +70,7 @@ _server.host:"localhost”_
 `../bin/kibana`
 `curl localhost:5601`
 
-## 4. 安装 Nginx
+## 4.安装Nginx
 `vi /etc/yum.repos.d/nginx.repo`
 ```
 [nginx]
@@ -104,7 +104,7 @@ server {
 `sudo systemctl start nginx`
 `http://FQDN 或者 http://IP`
 
-## 5. 安装 Logstash
+## 5.安装Logstash
 `wget https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz`
 `tar xzvf logstash-2.1.1.tar.gz`
 `pwd`
@@ -114,7 +114,7 @@ _bin CHANGELOG.md CONTRIBUTORS Gemfile Gemfile.jruby-1.9.lock lib LICENSE NOTICE
 `cd bin`
 `./logstash -e 'input { stdin { } } output { stdout {} }'`
 
-## 6. 配置 Logstash
+## 6.配置Logstash
 ```log
 input {
 }
@@ -175,7 +175,7 @@ _subjectAltName = IP: logstash_server_ip_
 `sudo openssl req -config /etc/pki/tls/openssl.cnf -x509 -days 3650 -batch -nodes -newkey
          rsa:2048 -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt`
 
-## 7. 安装 Logstash-forwarder
+## 7.安装Logstash-forwarder
 配置 Logstash-forwarder 安装源
 `rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch`
 `vi /etc/yum.repos.d/logstash-forwarder.repo`
@@ -190,7 +190,7 @@ enabled=1
 ```
 `yum -y install logstash-forwarder`
 
-## 8. 最后验证
+## 8.最后验证
 `open http://IP:5601`
 
 
