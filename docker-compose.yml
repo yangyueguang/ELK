@@ -7,8 +7,7 @@ services:
       - "9300:9300"
     volumes:
       - type: bind
-        #        source: ./elasticsearch/config/elasticsearch.yml
-        source: elastic_config
+        source: ./elasticsearch/config/elasticsearch.yml
         target: /usr/share/elasticsearch/config/elasticsearch.yml
         read_only: true
       - type: volume
@@ -25,8 +24,7 @@ services:
     image: docker.elastic.co/logstash/logstash:7.8.0
     volumes:
       - type: bind
-        source: logstash_config
-#        source: ./logstash/config/logstash.yml
+        source: ./logstash/config/logstash.yml
         target: /usr/share/logstash/config/logstash.yml
         read_only: true
       - type: bind
@@ -48,8 +46,7 @@ services:
     image: docker.elastic.co/kibana/kibana:7.8.0
     volumes:
       - type: bind
-#        source: ./kibana/config/kibana.yml
-        source: kibana_config
+        source: ./kibana/config/kibana.yml
         target: /usr/share/kibana/config/kibana.yml
         read_only: true
     ports:
@@ -58,16 +55,6 @@ services:
       - elk
     depends_on:
       - elasticsearch
-
-configs:
-  elastic_config:
-    file: ./elasticsearch/config/elasticsearch.yml
-  logstash_config:
-    file: ./logstash/config/logstash.yml
-  logstash_pipeline:
-    file: ./logstash/pipeline/logstash.conf
-  kibana_config:
-    file: ./kibana/config/kibana.yml
 
 networks:
   elk:
