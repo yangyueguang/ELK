@@ -28,52 +28,6 @@ make install
 ```python
 ## 配置nginx 
 cd /etc/nginx/
-mv nginx.conf nginx.conf_bak
-## 这里提供一个 nginx.conf 配置模版，请根据实际情况自行修改
-cat nginx.conf
-
-user  nobody;
-worker_processes  2;
-
-error_log  /var/log/nginx/error.log warn;
-pid        /var/run/nginx.pid;
-
-
-events {
-    worker_connections  10240;
-}
-
-http {
-    include       /etc/nginx/mime.types;
-    default_type  application/octet-stream;
-
-    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                      '$status $body_bytes_sent "$http_referer" '
-                      '"$http_user_agent" "$http_x_forwarded_for"';
-
-    log_format  post_format $request_body;
-    access_log  /var/log/nginx/access.log  main;
-    sendfile        on;
-    #tcp_nopush     on;
-    keepalive_timeout  120;
-    proxy_connect_timeout 600;
-    proxy_send_timeout 600s;
-    proxy_read_timeout 600s;
-    #gzip  on;
-    include /etc/nginx/http.d/*.conf;
-}
-
-stream {
-    log_format proxy '$remote_addr [$time_local] '
-                     '$protocol $status $bytes_sent $bytes_received '
-                     '$session_time "$upstream_addr" '
-                     '"$upstream_bytes_sent" "$upstream_bytes_received" "$upstream_connect_time"';
-    access_log /var/log/nginx/stream.access.log proxy;
-
-    include /etc/nginx/stream.d/*.conf;
-}
-```
-```python
 ## 启动nginx
 mkdir -p /etc/nginx/http.d
 mkdir -p /etc/nginx/stream.d
@@ -164,93 +118,49 @@ cat /etc/init.d/redis
 #!/bin/bash
 #chkconfig: 2345 10 90
 #description: Start and Stop redis
-
 REDISPORT=6379
-
 EXEC=/usr/local/redis/bin/redis-server
-
 REDIS_CLI=/usr/local/redis/bin/redis-cli
-
 PIDFILE=/var/run/redis.pid
-
 CONF="/etc/redis.conf"
-
 case "$1" in
-
 start)
-
 if [ -f $PIDFILE ]
-
 then
-
 echo "$PIDFILE exists, process is already running or crashed"
-
 else
-
 echo "Starting Redis server..."
-
 $EXEC $CONF
-
 fi
-
 if [ "$?"="0" ]
-
 then
-
 echo "Redis is running..."
-
 fi
-
 ;;
-
 stop)
-
 if [ ! -f $PIDFILE ]
-
 then
-
 echo "$PIDFILE does not exist, process is not running"
-
 else
-
 PID=$(cat $PIDFILE)
-
 echo "Stopping ..."
-
 $REDIS_CLI -p $REDISPORT SHUTDOWN
-
 while [ -x ${PIDFILE} ]
-
 do
-
 echo "Waiting for Redis to shutdown ..."
-
 sleep 1
-
 done
-
 echo "Redis stopped"
-
 fi
-
 ;;
-
 restart|force-reload)
-
 ${0} stop
-
 ${0} start
-
 ;;
-
 *)
-
 echo "Usage: /etc/init.d/redis {start|stop|restart|force-reload}" >&2
-
 exit 1
-
 esac
-
 ```
 ### 添加执行权限
 

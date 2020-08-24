@@ -14,7 +14,7 @@ filebeat.prospectors:
 - input_type: container
     include_lines: ['ERROR']
     paths:
-        - /usr/share/filebeat/dockerlogs/*/*.log # 不同服务容器的容器日志都在这里
+        - /usr/share/filebeat/dockerlogs/*/*.log
     close_timeout: 5m
 
 output.redis:
