@@ -18,6 +18,7 @@
 * 9200: Elasticsearch HTTP
 * 9300: Elasticsearch TCP transport
 * 5601: Kibana
+
 Create an index pattern via the Kibana API:
 ```bash
 $ curl -XPOST -D- 'http://localhost:5601/api/saved_objects/index-pattern' \
