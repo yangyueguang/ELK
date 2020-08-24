@@ -48,7 +48,7 @@ baseurl=http://debuginfo.centos.org/7/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-Debug-7
 enabled=0
-#
+
 [fasttrack]
 name=CentOS-7 - fasttrack
 mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=fasttrack&infra=$infra
