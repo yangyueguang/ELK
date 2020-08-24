@@ -1,0 +1,31 @@
+filebeat.prospectors:
+- input_type: log
+    enabled: true
+    include_lines: ['ERROR']
+    paths:
+        - /var/log/system.log
+        - /var/log/*.log
+        - /logs/*.log
+    multiline.pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}'
+    multiline.negate: true
+    multiline.match: after
+    fields:
+        env: dev-1
+- input_type: container
+    include_lines: ['ERROR']
+    paths:
+        - /usr/share/filebeat/dockerlogs/*/*.log # 不同服务容器的容器日志都在这里
+    close_timeout: 5m
+
+output.redis:
+    hosts: ["redis:6379"]
+    key: "filebeat"
+    db: 0
+    timeout: 60
+output.logstash:
+    enabled: true
+    hosts: ["logstash:5044"]
+output.console:
+    enabled: false
+    pretty: true
+
