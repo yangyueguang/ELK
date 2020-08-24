@@ -1,6 +1,8 @@
 # ELK具体安装过程如下
 
 * [1. 安装 JDK](#安装JDK)
+* [2. 安装 Redis](#安装Redis)
+* [3. 安装 Filebeat](#安装Filebeat)
 * [2. 安装 Elasticsearch](#安装Elasticsearch)
 * [3. 安装 Kibana](#安装Kibana)
 * [4. 安装 Nginx](#安装Nginx)
@@ -29,6 +31,85 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 ```
 yum install java-1.8.0-openjdk
 java -version
+```
+
+## 安装Redis
+
+注意⚠️：两台机器都需要部署！
+
+```python
+## 这里使用的是redis-5.0.4，请根据实际情况选择合适的版本
+wget http://download.redis.io/releases/redis-5.0.4.tar.gz
+tar -zxf redis-5.0.4.tar.gz -C /usr/local 
+cd /usr/local/redis-5.0.4
+make MALLOC=libc
+make
+make install
+```
+
+拷贝相关执行和配置文件
+
+```python
+mkdir -p /usr/local/redis/bin/
+cd /usr/local/redis-5.0.4/src
+cp redis-benchmark redis-check-aof redis-check-rdb redis-cli redis-server redis-sentinel /usr/local/redis/bin/
+cd ../
+cp redis.conf /etc/
+```
+
+```python
+# 启动redis
+/etc/init.d/redis start
+Starting Redis server...
+Redis is running...
+# 查看redis服务端口
+netstat -lnp|grep redis
+tcp        0      0 0.0.0.0:6379            0.0.0.0:*               LISTEN      3551/redis-server 0
+```
+验证节点信息
+
+```python
+#在主节点执行
+redis-cli INFO|grep role
+role:master
+#从节点执行
+redis-cli INFO|grep role
+role:slave
+```
+```python
+##主节点上：
+redis-cli
+127.0.0.1:6379> set name etf
+OK
+127.0.0.1:6379> get nam
+##两台从节点上：
+# redis-cli
+127.0.0.1:6379> get name
+"etf"
+127.0.0.1:6379> set city shanghai
+(error) READONLY You can't write against a read only replica.
+```
+
+
+## 安装Filebeat
+```bash
+wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.8.0-darwin-x86_64.tar.gz
+tar -xzvf filebeat-7.8.0-darwin-x86_64.tar.gz
+cd filebeat-7.8.0-darwin-x86_64/
+```
+修改filebeat.yml
+```bash
+output.elasticsearch:
+  hosts: ["<es_url>"]
+  username: "elastic"
+  password: "changeme"
+setup.kibana:
+  host: "<kibana_url>"
+```
+```bash
+./filebeat modules enable elasticsearch
+./filebeat setup
+./filebeat -e
 ```
 
 ## 安装Elasticsearch
@@ -206,26 +287,6 @@ enabled=1
 ```
 `yum -y install logstash-forwarder`
 
-## 安装Filebeat
-```bash
-wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.8.0-darwin-x86_64.tar.gz
-tar -xzvf filebeat-7.8.0-darwin-x86_64.tar.gz
-cd filebeat-7.8.0-darwin-x86_64/
-```
-修改filebeat.yml
-```bash
-output.elasticsearch:
-  hosts: ["<es_url>"]
-  username: "elastic"
-  password: "changeme"
-setup.kibana:
-  host: "<kibana_url>"
-```
-```bash
-./filebeat modules enable elasticsearch
-./filebeat setup
-./filebeat -e
-```
 ## 最后验证
 `open http://IP:5601`
 
