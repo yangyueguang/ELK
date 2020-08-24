@@ -1,8 +1,23 @@
 ---
+# 找到配置文件中的cluster.name，打开该配置并设置集群名称
 cluster.name: "docker-cluster"
 network.host: 0.0.0.0
-
+# 开启监听的端口
+http.port: 9200
 # trial
 xpack.license.self_generated.type: basic
 xpack.security.enabled: true
 xpack.monitoring.collection.enabled: true
+
+## 找到配置文件中的node.name，打开该配置并设置节点名称
+#node.name: elk-1
+## 修改data存放的路径
+#path.data: /data/es-data
+## 修改logs日志的路径
+#path.logs: /var/log/elasticsearch/
+## 配置内存使用用交换分区
+#bootstrap.memory_lock: true
+## 增加新的参数，这样head插件可以访问es (5.x版本，如果没有可以自己手动加)
+#http.cors.enabled: true
+#http.cors.allow-origin: "*"
+#bootstrap.system_call_filter: false

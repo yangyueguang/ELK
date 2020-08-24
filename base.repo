@@ -1,0 +1,341 @@
+# CentOS-Base.repo
+[base]
+name=CentOS-$releasever - Base
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
+baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+[updates]
+name=CentOS-$releasever - Updates
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra
+baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+[elasticsearch-5.x]
+name=Elasticsearch repository for 5.x packages
+baseurl=https://artifacts.elastic.co/packages/5.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+
+[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/centos/7/$basearch/
+gpgcheck=0
+enabled=1
+
+[logstash-forwarder]
+name=logstash-forwarder repository
+baseurl=http://packages.elastic.co/logstashforwarder/centos
+gpgcheck=1
+gpgkey=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
+enabled=1
+
+[cr]
+name=CentOS-$releasever - cr
+baseurl=http://mirror.centos.org/centos/$releasever/cr/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+enabled=0
+
+[base-debuginfo]
+name=CentOS-7 - Debuginfo
+baseurl=http://debuginfo.centos.org/7/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-Debug-7
+enabled=0
+#
+[fasttrack]
+name=CentOS-7 - fasttrack
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=fasttrack&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/fasttrack/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+[c7-media]
+name=CentOS-$releasever - Media
+baseurl=file:///media/CentOS/
+        file:///media/cdrom/
+        file:///media/cdrecorder/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+[base-source]
+name=CentOS-$releasever - Base Sources
+baseurl=http://vault.centos.org/centos/$releasever/os/Source/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#released updates 
+[updates-source]
+name=CentOS-$releasever - Updates Sources
+baseurl=http://vault.centos.org/centos/$releasever/updates/Source/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#additional packages that may be useful
+[extras-source]
+name=CentOS-$releasever - Extras Sources
+baseurl=http://vault.centos.org/centos/$releasever/extras/Source/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#additional packages that extend functionality of existing packages
+[centosplus-source]
+name=CentOS-$releasever - Plus Sources
+baseurl=http://vault.centos.org/centos/$releasever/centosplus/Source/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#c7.0.1406
+[C7.0.1406-base]
+name=CentOS-7.0.1406 - Base
+baseurl=http://vault.centos.org/7.0.1406/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+enabled=0
+
+[C7.0.1406-updates]
+name=CentOS-7.0.1406 - Updates
+baseurl=http://vault.centos.org/7.0.1406/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+enabled=0
+
+[C7.0.1406-extras]
+name=CentOS-7.0.1406 - Extras
+baseurl=http://vault.centos.org/7.0.1406/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+enabled=0
+
+[C7.0.1406-centosplus]
+name=CentOS-7.0.1406 - CentOSPlus
+baseurl=http://vault.centos.org/7.0.1406/centosplus/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+enabled=0
+
+[C7.0.1406-fasttrack]
+name=CentOS-7.0.1406 - CentOSPlus
+baseurl=http://vault.centos.org/7.0.1406/fasttrack/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+enabled=0
+
+# C7.1.1503
+[C7.1.1503-base]
+name=CentOS-7.1.1503 - Base
+baseurl=http://vault.centos.org/7.1.1503/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+enabled=0
+
+[C7.1.1503-updates]
+name=CentOS-7.1.1503 - Updates
+baseurl=http://vault.centos.org/7.1.1503/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+enabled=0
+
+[C7.1.1503-extras]
+name=CentOS-7.1.1503 - Extras
+baseurl=http://vault.centos.org/7.1.1503/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+enabled=0
+
+[C7.1.1503-centosplus]
+name=CentOS-7.1.1503 - CentOSPlus
+baseurl=http://vault.centos.org/7.1.1503/centosplus/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+enabled=0
+
+[C7.1.1503-fasttrack]
+name=CentOS-7.1.1503 - CentOSPlus
+baseurl=http://vault.centos.org/7.1.1503/fasttrack/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+enabled=0
+
+[docker-ce-stable]
+name=Docker CE Stable - $basearch
+baseurl=https://download.docker.com/linux/centos/7/$basearch/stable
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-stable-debuginfo]
+name=Docker CE Stable - Debuginfo $basearch
+baseurl=https://download.docker.com/linux/centos/7/debug-$basearch/stable
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-stable-source]
+name=Docker CE Stable - Sources
+baseurl=https://download.docker.com/linux/centos/7/source/stable
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-edge]
+name=Docker CE Edge - $basearch
+baseurl=https://download.docker.com/linux/centos/7/$basearch/edge
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-edge-debuginfo]
+name=Docker CE Edge - Debuginfo $basearch
+baseurl=https://download.docker.com/linux/centos/7/debug-$basearch/edge
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-edge-source]
+name=Docker CE Edge - Sources
+baseurl=https://download.docker.com/linux/centos/7/source/edge
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-test]
+name=Docker CE Test - $basearch
+baseurl=https://download.docker.com/linux/centos/7/$basearch/test
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-test-debuginfo]
+name=Docker CE Test - Debuginfo $basearch
+baseurl=https://download.docker.com/linux/centos/7/debug-$basearch/test
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-test-source]
+name=Docker CE Test - Sources
+baseurl=https://download.docker.com/linux/centos/7/source/test
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-nightly]
+name=Docker CE Nightly - $basearch
+baseurl=https://download.docker.com/linux/centos/7/$basearch/nightly
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-nightly-debuginfo]
+name=Docker CE Nightly - Debuginfo $basearch
+baseurl=https://download.docker.com/linux/centos/7/debug-$basearch/nightly
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-nightly-source]
+name=Docker CE Nightly - Sources
+baseurl=https://download.docker.com/linux/centos/7/source/nightly
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+[epel]
+name=Extra Packages for Enterprise Linux 7 - $basearch
+baseurl=http://10.60.2.26/epel/7/$basearch
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch
+failovermethod=priority
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+
+[epel-debuginfo]
+name=Extra Packages for Enterprise Linux 7 - $basearch - Debug
+baseurl=http://10.60.2.26/epel/7/$basearch/debug
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-debug-7&arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+gpgcheck=1
+
+[epel-source]
+name=Extra Packages for Enterprise Linux 7 - $basearch - Source
+baseurl=http://10.60.2.26/epel/7/SRPMS
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-source-7&arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+gpgcheck=1
+
+[epel]
+name=Extra Packages for Enterprise Linux 7 - $basearch
+#baseurl=http://download.fedoraproject.org/pub/epel/7/$basearch
+metalink=https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch
+failovermethod=priority
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+
+[epel-debuginfo]
+name=Extra Packages for Enterprise Linux 7 - $basearch - Debug
+#baseurl=http://download.fedoraproject.org/pub/epel/7/$basearch/debug
+metalink=https://mirrors.fedoraproject.org/metalink?repo=epel-debug-7&arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+gpgcheck=1
+
+[epel-source]
+name=Extra Packages for Enterprise Linux 7 - $basearch - Source
+#baseurl=http://download.fedoraproject.org/pub/epel/7/SRPMS
+metalink=https://mirrors.fedoraproject.org/metalink?repo=epel-source-7&arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+gpgcheck=1
+
+[epel-testing]
+name=Extra Packages for Enterprise Linux 7 - Testing - $basearch
+#baseurl=http://download.fedoraproject.org/pub/epel/testing/7/$basearch
+metalink=https://mirrors.fedoraproject.org/metalink?repo=testing-epel7&arch=$basearch
+failovermethod=priority
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+
+[epel-testing-debuginfo]
+name=Extra Packages for Enterprise Linux 7 - Testing - $basearch - Debug
+#baseurl=http://download.fedoraproject.org/pub/epel/testing/7/$basearch/debug
+metalink=https://mirrors.fedoraproject.org/metalink?repo=testing-debug-epel7&arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+gpgcheck=1
+
+[epel-testing-source]
+name=Extra Packages for Enterprise Linux 7 - Testing - $basearch - Source
+#baseurl=http://download.fedoraproject.org/pub/epel/testing/7/SRPMS
+metalink=https://mirrors.fedoraproject.org/metalink?repo=testing-source-epel7&arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+gpgcheck=1
+
+[google-chrome]
+name=google-chrome
+baseurl=http://dl.google.com/linux/chrome/rpm/stable/x86_64
+enabled=1
+gpgcheck=1
+gpgkey=https://dl.google.com/linux/linux_signing_key.pub

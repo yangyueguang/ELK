@@ -5,6 +5,7 @@ elasticsearch.hosts: [ "http://elasticsearch:9200" ]
 monitoring.ui.container.elasticsearch.enabled: true
 
 ## X-Pack security credentials
-#elasticsearch.url: http://elasticsearch:9200
+elasticsearch.url: http://elasticsearch:9200
 elasticsearch.username: elastic
 elasticsearch.password: changeme
+kibana.index: ".kibana"

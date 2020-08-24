@@ -1,295 +1,148 @@
 # ELK具体安装过程如下
-
 * [1. 安装 JDK](#安装JDK)
 * [2. 安装 Redis](#安装Redis)
 * [3. 安装 Filebeat](#安装Filebeat)
-* [2. 安装 Elasticsearch](#安装Elasticsearch)
-* [3. 安装 Kibana](#安装Kibana)
-* [4. 安装 Nginx](#安装Nginx)
-* [5. 安装 Logstash](#安装Logstash)
-* [6. 配置 Logstash](#配置Logstash)
-* [7. 安装 Logstash-forwarder](#安装Logstash-forwarder)
-* [8. 最终验证](#最终验证)
+* [4. 安装 Logstash](#安装Logstash)
+* [5. 配置 Logstash](#配置Logstash)
+* [6. 安装 Logstash-forwarder](#安装Logstash-forwarder)
+* [7. 安装 Elasticsearch](#安装Elasticsearch)
+* [8. 安装 Kibana](#安装Kibana)
+* [9. 安装 Nginx](#安装Nginx)
+* [10. 最终验证](#最终验证)
 
 ## 安装JDK
-`vi /etc/yum.repos.d/centos.repo` 添加如下:
+`vi /etc/yum.repos.d/centos.repo` 添加如下base.repo文件里的
 ```bash
-[base]
-name=CentOS-$releasever - Base
-mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
-#baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
-#released updates
-[updates]
-name=CentOS-$releasever - Updates
-mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra
-#baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
-```
-```
+rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch
 yum install java-1.8.0-openjdk
+yum install -y redis
+yum install -y filebeat
+yum install -y logstash
+yum install -y logstash-forwarder
+yum install -y elasticsearch
+yum install -y kibana
+yum install -y nginx httpd-tools
 java -version
 ```
 
 ## 安装Redis
-
-注意⚠️：两台机器都需要部署！
-
 ```python
 ## 这里使用的是redis-5.0.4，请根据实际情况选择合适的版本
-wget http://download.redis.io/releases/redis-5.0.4.tar.gz
-tar -zxf redis-5.0.4.tar.gz -C /usr/local 
-cd /usr/local/redis-5.0.4
+redis_version=redis-5.0.4
+wget http://download.redis.io/releases/$redis_version.tar.gz
+tar -zxf $redis_version.tar.gz -C /usr/local 
+mv /usr/local/$redis_version/ /usr/local/redis
+cd /usr/local/redis
 make MALLOC=libc
 make
 make install
-```
-
-拷贝相关执行和配置文件
-
-```python
-mkdir -p /usr/local/redis/bin/
-cd /usr/local/redis-5.0.4/src
-cp redis-benchmark redis-check-aof redis-check-rdb redis-cli redis-server redis-sentinel /usr/local/redis/bin/
-cd ../
-cp redis.conf /etc/
-```
-
-```python
-# 启动redis
-/etc/init.d/redis start
-Starting Redis server...
-Redis is running...
+PATH=/usr/local/redis/src:$PATH
+redis-server redis.conf &
+# 修改密码
+# sed -i "s/# requirepass foobared/requirepass 123456/g" redis.conf
+# sudo service redis restart
 # 查看redis服务端口
 netstat -lnp|grep redis
-tcp        0      0 0.0.0.0:6379            0.0.0.0:*               LISTEN      3551/redis-server 0
-```
-验证节点信息
-
-```python
-#在主节点执行
+# 验证节点信息
 redis-cli INFO|grep role
-role:master
-#从节点执行
-redis-cli INFO|grep role
-role:slave
 ```
-```python
-##主节点上：
-redis-cli
-127.0.0.1:6379> set name etf
-OK
-127.0.0.1:6379> get nam
-##两台从节点上：
-# redis-cli
-127.0.0.1:6379> get name
-"etf"
-127.0.0.1:6379> set city shanghai
-(error) READONLY You can't write against a read only replica.
-```
-
 
 ## 安装Filebeat
 ```bash
-wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.8.0-darwin-x86_64.tar.gz
+wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.8.0-linux-x86_64.tar.gz
 tar -xzvf filebeat-7.8.0-darwin-x86_64.tar.gz
-cd filebeat-7.8.0-darwin-x86_64/
-```
-修改filebeat.yml
-```bash
-output.elasticsearch:
-  hosts: ["<es_url>"]
-  username: "elastic"
-  password: "changeme"
-setup.kibana:
-  host: "<kibana_url>"
-```
-```bash
-./filebeat modules enable elasticsearch
+mv filebeat-7.8.0-darwin-x86_64 /usr/local/filebeat
+cd /usr/local/filebeat
+# 修改filebeat.yml
 ./filebeat setup
 ./filebeat -e
+```
+
+## 安装Logstash
+```bash
+wget https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz
+tar xzvf logstash-2.1.1.tar.gz
+mv logstash-2.1.1 /usr/local/logstash
+/usr/local/logstash/bin/logstash -e 'input { stdin { } } output { stdout {} }'
+/usr/local/logstash/bin/logstash -f ./logstash.conf
 ```
 
 ## 安装Elasticsearch
 ```
 wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.1.0/elasticsearch-2.1.0.tar.gz
-tar xzvf elasticsearch-2.1.0.tar.gz
-pwd
+tar -xzvf elasticsearch-2.1.0.tar.gz
+mv elasticsearch-2.1.0 /usr/local/elasticsearch
+cat /etc/security/limits.conf | grep -v "#" | while read line
+  do
+    sed -i "s/${line}/ /"  /etc/security/limits.conf
+  done
+  echo 'root soft memlock unlimited' >> /etc/security/limits.conf
+  echo 'root hard memlock unlimited' >> /etc/security/limits.conf
+  echo 'root soft nofile 65536' >> /etc/security/limits.conf
+  echo 'root hard nofile 65536' >> /etc/security/limits.conf
+ # 关闭已有的可能启动的elasticsearch服务
+  ps -aux | grep elasticsearch | grep -v "grep" | awk '{print $2}' | xargs kill -9
+ cd /usr/local/elasticsearch/config/
+  # 需要交互输入，慎重
+  read -p "Input elasticsearch ip:" es_ip
+  sed -i "s/network.host: 192.168.0.1/network.host: $es_ip/" elasticsearch.yml
+  sed -i "s/ping.unicast.hosts: \[.*\]/ping.unicast.hosts: \[\"$es_ip:9300\"\]/" elasticsearch.yml
+/usr/local/elasticsearch/bin/elasticsearch -d
+# 看下是否成功
+netstat -antp |grep 9200
+curl http://127.0.0.1:9200/
 ```
-_/home/elk/elasticsearch-2.1.0_  
-`ls`  
-_bin config lib LICENSE.txt NOTICE.txt README.textile_  
-`cd config`  
-`vi elasticsearch.yml`  
-找到network.host一行，修改成以下：  
-_network.host: localhost_  
-`../bin/elasticsearch`  
+利用API查看状态
+`curl -i -XGET 'localhost:9200/_count?pretty'`
+安装elasticsearch-head插件
+`docker run -p 9100:9100 mobz/elasticsearch-head:5`
+docker容器下载成功并启动以后，运行浏览器打开http://localhost:9100/
 `curl 'localhost:9200/'`  
-```bash
-{
-    "name" : "Surge",
-    "cluster_name" : "elasticsearch",
-    "version" : {
-        "number" : "2.1.0",
-        "build_hash" : "72cd1f1a3eee09505e036106146dc1949dc5dc87",
-        "build_timestamp" : "2015-11-18T22:40:03Z",
-        "build_snapshot" : false,
-        "lucene_version" : "5.3.1"
-    }
-    "tagline" : "You Know, for Search"
-}
-```
 
 ## 安装Kibana
-`wget https://download.elastic.co/kibana/kibana/kibana-4.3.0-linux-x64.tar.gz`  
-`tar xzvf kibana-4.3.0-linux-x64.tar.gz`  
-`pwd`  
-_/home/elk/kibana-4.3.0-linux-x64_  
-`ls`  
-_bin config installedPlugins LICENSE.txt node node_modules optimize package.json README.txt src webpackShims_  
-`cd config`  
-`vi kibana.yml`  
-_server.host:"localhost”_  
-`../bin/kibana`  
-`curl localhost:5601`  
+```bash
+#wget https://download.elastic.co/kibana/kibana/kibana-4.3.0-linux-x64.tar.gz 
+wget https://artifacts.elastic.co/downloads/kibana/kibana-5.4.0-linux-x86_64.tar.gz
+tar xzvf kibana-5.4.0-linux-x86_64.tar.gz
+mv kibana-5.4.0-linux-x86_64 /usr/local/kibana
+# 修改kibana.yml文件
+# 安装screen,以便于kibana在后台运行（当然也可以不用安装，用其他方式进行后台启动）
+yum -y install screen
+screen ./bin/kibana
+#./bin/kibana
+netstat -antp |grep 5601
+curl localhost:5601 
+```
 
 ## 安装Nginx
-`vi /etc/yum.repos.d/nginx.repo`  
-```
-[nginx]
-name=nginx repo
-baseurl=http://nginx.org/packages/centos/7/$basearch/
-gpgcheck=0
-enabled=1
-```
-`yum install nginx httpd-tools`  
-`vi /etc/nginx/nginx.conf`  
-_include /etc/nginx/conf.d/*conf_  
-`vi /etc/nginx/conf.d/kibana.conf`  
-```log
-server {
- listen 80;
-
- server_name example.com;
-
- location / {
- proxy_pass http://localhost:5601;
- proxy_http_version 1.1;
- proxy_set_header Upgrade $http_upgrade;
- proxy_set_header Connection 'upgrade';
- proxy_set_header Host $host;
- proxy_cache_bypass $http_upgrade;
- }
-｝
-```
-启动 Nginx 服务  
-```
+```bash
+vi /etc/nginx/nginx.conf
+# include /etc/nginx/conf.d/*conf_  
+# 启动 Nginx 服务  
 sudo systemctl enable nginx
 sudo systemctl start nginx
-http://FQDN 或者 http://IP
+open http://IP:5601
 ```
-
-## 安装Logstash
-```
-wget https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz
-tar xzvf logstash-2.1.1.tar.gz
-pwd
-"/home/elk/logstash-2.1.1_"
-ls
-"bin CHANGELOG.md CONTRIBUTORS Gemfile Gemfile.jruby-1.9.lock lib LICENSE NOTICE.TXT vendor"
-cd bin
-./logstash -e 'input { stdin { } } output { stdout {} }'
-```
-
-## 配置Logstash
-```log
-input {
-}
-filter {
-}
-output {
-}
-```
-
-配置 SSL
-```
-mkdir -p /etc/pki/tls/certs etc/pki/tls/private
-vi /etc/ssl/openssl.cnf
-找到 [v3_ca] 段，添加下面一行，保存退出。
-"subjectAltName = IP: logstash_server_ip"
-cd /etc/pki/tls
-sudo openssl req -config /etc/ssl/openssl.cnf -x509 -days 3650 -batch -nodes -newkey rsa:2048 -keyout
-         private/logstash-forwarder.key -out certs/logstash-forwarder.crt
-```
-
-这里产生的 logstash-forwarder.crt 文件会在下一节安装配置 Logstash-forwarder 的时候使用到。  
-配置 Logstash 管道文件  
-```
-cd /home/elk/logstash-2.1.1
-mkdir conf
-vi simple.conf
-```
-
-```log
-input {
-    lumberjack {
-        port => 5043
-        type => "logs"
-        ssl_certificate => "/etc/pki/tls/certs/logstash-forwarder.crt"
-        ssl_key => "/etc/pki/tls/private/logstash-forwarder.key"
-    }
-}
-filter {
-    grok {
-        match => { "message" => "%{COMBINEDAPACHELOG}" }
-    }
-    date {
-        match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
-    }
-}
-output {
-    elasticsearch { hosts => ["localhost:9200"] }
-    stdout { codec => rubydebug }
-}
-```
-启动 Logstsh
-```
-cd /home/elk/logstash-2.1.1/bin
-./logstash -f ../conf/simple.conf
-```
-
-
-在 CentOS 7.1 上配置 Logstash，只有一步配置 SSL 是稍微有点不同，其他全部一样。
-```
-vi /etc/pki/tls/openssl.cnf
-找到 [v3_ca] 段，添加下面一行，保存退出。
-"subjectAltName = IP: logstash_server_ip"
-cd /etc/pki/tls`
-sudo openssl req -config /etc/pki/tls/openssl.cnf -x509 -days 3650 -batch -nodes -newkey
-         rsa:2048 -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt
-```
-
-## 安装Logstash-forwarder
-配置 Logstash-forwarder 安装源
-```
-rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch
-vi /etc/yum.repos.d/logstash-forwarder.repo```
-加入以下内容：
-```log
-[logstash-forwarder]
-name=logstash-forwarder repository
-baseurl=http://packages.elastic.co/logstashforwarder/centos
-gpgcheck=1
-gpgkey=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
-enabled=1
-```
-`yum -y install logstash-forwarder`
 
 ## 最后验证
-`open http://IP:5601`
-
-
-
-
+编辑nginx配置文件，修改以下内容（在http模块下添加）
+```bash
+log_format json '{"@timestamp":"$time_iso8601",'
+             '"@version":"1",'
+             '"client":"$remote_addr",'
+             '"url":"$uri",'
+             '"status":"$status",'
+             '"domian":"$host",'
+             '"host":"$server_addr",'
+             '"size":"$body_bytes_sent",'
+             '"responsetime":"$request_time",'
+             '"referer":"$http_referer",'
+             '"ua":"$http_user_agent"'
+          '}';
+# 修改access_log的输出格式为刚才定义的json 
+access_log  logs/elk.access.log  json;
+```
+运行看看效果如何`logstash -f /etc/logstash/conf.d/full.conf`
+运行看看效果如何`logstash -f /etc/logstash/conf.d/redis-out.conf`
+因为ES保存日志是永久保存，所以需要定期删除一下日志，下面命令为删除指定时间前的日志  
+`curl -X DELETE http://xx.xx.com:9200/logstash-*-`date +%Y-%m-%d -d "-$n days"`
