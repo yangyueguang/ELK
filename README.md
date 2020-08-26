@@ -4,12 +4,11 @@
 * [3. 安装 Filebeat](#安装Filebeat)
 * [4. 安装 Logstash](#安装Logstash)
 * [5. 配置 Logstash](#配置Logstash)
-* [6. 安装 Logstash-forwarder](#安装Logstash-forwarder)
-* [7. 安装 Elasticsearch](#安装Elasticsearch)
-* [8. 安装 Kibana](#安装Kibana)
-* [9. 安装 Nginx](#安装Nginx)
-* [10. 最终验证](#最终验证)
-* [redis 集群部署](#部署redis主从+哨兵)
+* [6. 安装 Elasticsearch](#安装Elasticsearch)
+* [7. 安装 Kibana](#安装Kibana)
+* [8. 安装 Nginx](#安装Nginx)
+* [9. 最终验证](#最终验证)
+* [10.redis 集群部署](#部署redis主从+哨兵)
 
 # ELK结构框架
 ![](https://s2.ax1x.com/2020/01/09/lWqbPH.png)
@@ -45,12 +44,12 @@ $ curl -XPOST -D- 'http://localhost:5601/api/saved_objects/index-pattern' \
 ## 安装JDK
 `vi /etc/yum.repos.d/centos.repo` 添加base.repo文件里的内容
 ```bash
+es_version=7.9.0
 rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch
 yum install java-1.8.0-openjdk
-yum install -y redis
 yum install -y filebeat
+yum install -y redis
 yum install -y logstash
-yum install -y logstash-forwarder
 yum install -y elasticsearch
 yum install -y kibana
 yum install -y nginx httpd-tools
@@ -81,9 +80,9 @@ redis-cli INFO|grep role
 
 ## 安装Filebeat
 ```bash
-wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.8.0-linux-x86_64.tar.gz
-tar -xzvf filebeat-7.8.0-darwin-x86_64.tar.gz
-mv filebeat-7.8.0-darwin-x86_64 /usr/local/filebeat
+wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-$es_version-linux-x86_64.tar.gz
+tar -xzvf filebeat-$es_version-darwin-x86_64.tar.gz
+mv filebeat-$es_version-darwin-x86_64 /usr/local/filebeat
 cd /usr/local/filebeat
 # 修改filebeat.yml
 ./filebeat setup
@@ -92,18 +91,18 @@ cd /usr/local/filebeat
 
 ## 安装Logstash
 ```bash
-wget https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz
-tar xzvf logstash-2.1.1.tar.gz
-mv logstash-2.1.1 /usr/local/logstash
+wget https://artifacts.elastic.co/downloads/beats/logstash/logstash-$es_version-linux-x86_64.tar.gz
+tar xzvf logstash-$es_version-linux-x86_64.tar.gz
+mv logstash-$es_version /usr/local/logstash
 /usr/local/logstash/bin/logstash -e 'input { stdin { } } output { stdout {} }'
 /usr/local/logstash/bin/logstash -f ./logstash.conf
 ```
 
 ## 安装Elasticsearch
-```
-wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.1.0/elasticsearch-2.1.0.tar.gz
-tar -xzvf elasticsearch-2.1.0.tar.gz
-mv elasticsearch-2.1.0 /usr/local/elasticsearch
+```bash
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$es_version-linux-x86_64.tar.gz
+tar -xzvf elasticsearch-$es_version-linux-x86_64.tar.gz
+mv elasticsearch-$es_version-linux-x86_64 /usr/local/elasticsearch
 cat /etc/security/limits.conf | grep -v "#" | while read line
   do
     sed -i "s/${line}/ /"  /etc/security/limits.conf
@@ -133,10 +132,9 @@ docker容器下载成功并启动以后，运行浏览器打开http://localhost:
 
 ## 安装Kibana
 ```bash
-#wget https://download.elastic.co/kibana/kibana/kibana-4.3.0-linux-x64.tar.gz 
-wget https://artifacts.elastic.co/downloads/kibana/kibana-5.4.0-linux-x86_64.tar.gz
-tar xzvf kibana-5.4.0-linux-x86_64.tar.gz
-mv kibana-5.4.0-linux-x86_64 /usr/local/kibana
+wget https://artifacts.elastic.co/downloads/kibana/kibana-$es_version-linux-x86_64.tar.gz
+tar xzvf kibana-$es_version-linux-x86_64.tar.gz
+mv kibana-$es_version-linux-x86_64 /usr/local/kibana
 # 修改kibana.yml文件
 # 安装screen,以便于kibana在后台运行（当然也可以不用安装，用其他方式进行后台启动）
 yum -y install screen
@@ -316,3 +314,5 @@ master0:name=mymaster,status=ok,address=172.21.0.9:6379,slaves=2,sentinels=4
 * [集中式日志系统 ELK 协议栈详解](https://developer.ibm.com/zh/articles/os-cn-elk/)
 * [grokdebug](https://grokdebug.herokuapp.com/)
 * [死磕Elasticsearch方法论认知清单](https://blog.csdn.net/newtelcom/article/details/80224379)
+* [ElasticSearch中文](https://www.elastic.co/guide/cn/index.html)
+* [ElasticSearch中文社区](https://elasticsearch.cn/)
