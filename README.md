@@ -60,7 +60,7 @@ java -version
 ```python
 ## 这里使用的是redis-5.0.4，请根据实际情况选择合适的版本
 redis_version=redis-5.0.4
-wget http://download.redis.io/releases/$redis_version.tar.gz
+wget http://download.redis.io/releases/${redis_version}.tar.gz
 tar -zxf $redis_version.tar.gz -C /usr/local 
 mv /usr/local/$redis_version/ /usr/local/redis
 cd /usr/local/redis
@@ -80,9 +80,9 @@ redis-cli INFO|grep role
 
 ## 安装Filebeat
 ```bash
-wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-$es_version-linux-x86_64.tar.gz
-tar -xzvf filebeat-$es_version-darwin-x86_64.tar.gz
-mv filebeat-$es_version-darwin-x86_64 /usr/local/filebeat
+wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${es_version}-linux-x86_64.tar.gz
+tar -xzvf filebeat-${es_version}-darwin-x86_64.tar.gz
+mv filebeat-${es_version}-darwin-x86_64 /usr/local/filebeat
 cd /usr/local/filebeat
 # 修改filebeat.yml
 ./filebeat setup
@@ -91,18 +91,18 @@ cd /usr/local/filebeat
 
 ## 安装Logstash
 ```bash
-wget https://artifacts.elastic.co/downloads/beats/logstash/logstash-$es_version-linux-x86_64.tar.gz
-tar xzvf logstash-$es_version-linux-x86_64.tar.gz
-mv logstash-$es_version /usr/local/logstash
+wget https://artifacts.elastic.co/downloads/beats/logstash/logstash-${es_version}-linux-x86_64.tar.gz
+tar xzvf logstash-${es_version}-linux-x86_64.tar.gz
+mv logstash-${es_version} /usr/local/logstash
 /usr/local/logstash/bin/logstash -e 'input { stdin { } } output { stdout {} }'
 /usr/local/logstash/bin/logstash -f ./logstash.conf
 ```
 
 ## 安装Elasticsearch
 ```bash
-wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$es_version-linux-x86_64.tar.gz
-tar -xzvf elasticsearch-$es_version-linux-x86_64.tar.gz
-mv elasticsearch-$es_version-linux-x86_64 /usr/local/elasticsearch
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${es_version}-linux-x86_64.tar.gz
+tar -xzvf elasticsearch-${es_version}-linux-x86_64.tar.gz
+mv elasticsearch-${es_version}-linux-x86_64 /usr/local/elasticsearch
 cat /etc/security/limits.conf | grep -v "#" | while read line
   do
     sed -i "s/${line}/ /"  /etc/security/limits.conf
@@ -132,9 +132,9 @@ docker容器下载成功并启动以后，运行浏览器打开http://localhost:
 
 ## 安装Kibana
 ```bash
-wget https://artifacts.elastic.co/downloads/kibana/kibana-$es_version-linux-x86_64.tar.gz
-tar xzvf kibana-$es_version-linux-x86_64.tar.gz
-mv kibana-$es_version-linux-x86_64 /usr/local/kibana
+wget https://artifacts.elastic.co/downloads/kibana/kibana-${es_version}-linux-x86_64.tar.gz
+tar xzvf kibana-${es_version}-linux-x86_64.tar.gz
+mv kibana-${es_version}-linux-x86_64 /usr/local/kibana
 # 修改kibana.yml文件
 # 安装screen,以便于kibana在后台运行（当然也可以不用安装，用其他方式进行后台启动）
 yum -y install screen
