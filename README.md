@@ -1,4 +1,4 @@
-# ELK Docker与本地话部署
+# ELK Docker与本地部署
 * [1. 安装 JDK](#安装JDK)
 * [2. 安装 Redis](#安装Redis)
 * [3. 安装 Filebeat](#安装Filebeat)
