@@ -191,13 +191,6 @@ access_log  logs/elk.access.log  json;
 `curl -X DELETE http://xx.xx.com:9200/logstash-*-`date +%Y-%m-%d -d "-$n days"`
 
 
-* [elk-stack](https://www.elastic.co/elk-stack)
-* [ELK搭建篇](https://www.cnblogs.com/cheyunhua/p/11238489.html)
-* [集中式日志系统 ELK 协议栈详解](https://developer.ibm.com/zh/articles/os-cn-elk/)
-
-
-
-
 # 部署redis主从+哨兵
 ## 结构图
 ![UH645d.png](https://s1.ax1x.com/2020/07/22/UH645d.png)
@@ -316,3 +309,10 @@ master0:name=mymaster,status=ok,address=172.21.0.9:6379,slaves=2,sentinels=4
 关闭` 172.21.0.9（主）`的` redis01 `，发现客户端请求流量打到` 172.21.0.9（主）`的` app01 `上，这时` redis02 `由slave变成master，服务可以正常访问；
 此时再启动redis01，redis01不会接管主成为master，即redis02还是主，master不会因为redis01的重启而飘移；
 
+
+# 参考资料
+* [elk-stack](https://www.elastic.co/elk-stack)
+* [ELK搭建篇](https://www.cnblogs.com/cheyunhua/p/11238489.html)
+* [集中式日志系统 ELK 协议栈详解](https://developer.ibm.com/zh/articles/os-cn-elk/)
+* [grokdebug](https://grokdebug.herokuapp.com/)
+* [死磕Elasticsearch方法论认知清单](https://blog.csdn.net/newtelcom/article/details/80224379)
