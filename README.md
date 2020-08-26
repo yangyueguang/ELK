@@ -3,12 +3,12 @@
 * [2. 安装 Redis](#安装Redis)
 * [3. 安装 Filebeat](#安装Filebeat)
 * [4. 安装 Logstash](#安装Logstash)
-* [5. 配置 Logstash](#配置Logstash)
-* [6. 安装 Elasticsearch](#安装Elasticsearch)
-* [7. 安装 Kibana](#安装Kibana)
-* [8. 安装 Nginx](#安装Nginx)
-* [9. 最终验证](#最终验证)
-* [10.redis 集群部署](#部署redis主从+哨兵)
+* [5. 安装 Elasticsearch](#安装Elasticsearch)
+* [6. 安装 Kibana](#安装Kibana)
+* [7. 安装 Nginx](#安装Nginx)
+* [8. 最终验证](#最终验证)
+* [9. redis 集群部署](#部署redis哨兵)
+* [10. 参考资料](#参考资料)
 
 # ELK结构框架
 ![](https://s2.ax1x.com/2020/01/09/lWqbPH.png)
@@ -123,11 +123,11 @@ cat /etc/security/limits.conf | grep -v "#" | while read line
 netstat -antp |grep 9200
 curl http://127.0.0.1:9200/
 ```
-利用API查看状态
-`curl -i -XGET 'localhost:9200/_count?pretty'`
-安装elasticsearch-head插件
-`docker run -p 9100:9100 mobz/elasticsearch-head:5`
-docker容器下载成功并启动以后，运行浏览器打开http://localhost:9100/
+利用API查看状态  
+`curl -i -XGET 'localhost:9200/_count?pretty'`  
+安装elasticsearch-head插件  
+`docker run -p 9100:9100 mobz/elasticsearch-head:5`  
+docker容器下载成功并启动以后，运行浏览器打开http://localhost:9100/  
 `curl 'localhost:9200/'`  
 
 ## 安装Kibana
@@ -183,13 +183,13 @@ log_format json '{"@timestamp":"$time_iso8601",'
 # 修改access_log的输出格式为刚才定义的json 
 access_log  logs/elk.access.log  json;
 ```
-运行看看效果如何`logstash -f /etc/logstash/conf.d/full.conf`
-运行看看效果如何`logstash -f /etc/logstash/conf.d/redis-out.conf`
+运行看看效果如何`logstash -f /etc/logstash/conf.d/full.conf`  
+运行看看效果如何`logstash -f /etc/logstash/conf.d/redis-out.conf`  
 因为ES保存日志是永久保存，所以需要定期删除一下日志，下面命令为删除指定时间前的日志  
 `curl -X DELETE http://xx.xx.com:9200/logstash-*-`date +%Y-%m-%d -d "-$n days"`
 
 
-# 部署redis主从+哨兵
+# 部署redis哨兵
 ## 结构图
 ![UH645d.png](https://s1.ax1x.com/2020/07/22/UH645d.png)
 
