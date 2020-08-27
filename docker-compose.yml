@@ -25,7 +25,6 @@ services:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-#      - LS_JAVA_OPTS=-Xms2g -Xmx2g
     networks:
       - elk
     depends_on:
