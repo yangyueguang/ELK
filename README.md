@@ -119,16 +119,10 @@ cat /etc/security/limits.conf | grep -v "#" | while read line
   sed -i "s/network.host: 192.168.0.1/network.host: $es_ip/" elasticsearch.yml
   sed -i "s/ping.unicast.hosts: \[.*\]/ping.unicast.hosts: \[\"$es_ip:9300\"\]/" elasticsearch.yml
 /usr/local/elasticsearch/bin/elasticsearch -d
-# 看下是否成功
+curl -i -XGET 'localhost:9200/_count?pretty'
 netstat -antp |grep 9200
 curl http://127.0.0.1:9200/
 ```
-利用API查看状态  
-`curl -i -XGET 'localhost:9200/_count?pretty'`  
-安装elasticsearch-head插件  
-`docker run -p 9100:9100 mobz/elasticsearch-head:5`  
-docker容器下载成功并启动以后，运行浏览器打开http://localhost:9100/  
-`curl 'localhost:9200/'`  
 
 ## 安装Kibana
 ```bash
@@ -188,6 +182,33 @@ access_log  logs/elk.access.log  json;
 因为ES保存日志是永久保存，所以需要定期删除一下日志，下面命令为删除指定时间前的日志  
 `curl -X DELETE http://xx.xx.com:9200/logstash-*-`date +%Y-%m-%d -d "-$n days"`
 
+## ES插件安装
+1. [HQ监控](https://github.com/royrusso/elasticsearch-HQ) 管理ES集群以及通过web界面来查询操作,支持SQL转DSL
+`docker run -p 5000:5000 elastichq/elasticsearch-hq`
+2. [ik分词](https://github.com/medcl/elasticsearch-analysis-ik)
+`./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v${es_version}/elasticsearch-analysis-ik-${es_version}.zip`
+2. [head插件](https://github.com/mobz/elasticsearch-head) 可实现ES集群状态查看、索引数据查看、ES DSL实现(增、删、改、查操作)
+`docker run -p 9100:9100 mobz/elasticsearch-head:7`
+6. [marvel](https://www.elastic.co/downloads/marvel) 超赞的一个通过json查询的工具
+`bin/plugin -i elasticsearch/marvel/latest` localhost:9200/_plugin/marvel/sense/
+7. [SQL](https://github.com/NLPchina/elasticsearch-sql) 通过sql语法进行查询的工具
+`./bin/elasticsearch-plugin install https://github.com/NLPchina/elasticsearch-sql/releases/download/${es_version}.0/elasticsearch-sql-${es_version}.0.zip`
+3. [Cerebro](https://www.jianshu.com/p/433d821f9667) 查看ES集群堆内存使用率、CPU使用率、内存使用率、磁盘使用率。
+```bash
+wget https://github.com/lmenezes/cerebro/releases/download/v${es_version}/cerebro-${es_version}.tgz
+tar xzf cerebro-${es_version}.tgz
+# 指定一个端口启动
+cerebro-${es_version}/bin/cerebro -Dhttp.port=8088
+```
+
+## 使用Logstash从MySQL中同步数据到ElasticSearch
+```bash
+bin/logstash-plugin install logstash-input-jdbc
+bin/logstash-plugin install logstash-output-elasticsearch
+wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.46.zip --no-check-certificate
+unzip mysql-connector-java-5.1.46.zip
+# 这里面有一个MySQL依赖包jar，用于配置logstash里面的这个参数jdbc_driver_library
+```
 
 # 部署redis哨兵
 ## 结构图
