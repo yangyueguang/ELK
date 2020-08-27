@@ -182,17 +182,17 @@ access_log  logs/elk.access.log  json;
 `curl -X DELETE http://xx.xx.com:9200/logstash-*-`date +%Y-%m-%d -d "-$n days"`
 
 ## ES插件安装
-1. [HQ监控](https://github.com/royrusso/elasticsearch-HQ) 管理ES集群以及通过web界面来查询操作,支持SQL转DSL
+1. [HQ监控](https://github.com/royrusso/elasticsearch-HQ) 管理ES集群以及通过web界面来查询操作,支持SQL转DSL  
 `docker run -p 5000:5000 elastichq/elasticsearch-hq`
-2. [ik分词](https://github.com/medcl/elasticsearch-analysis-ik)
+2. [ik分词](https://github.com/medcl/elasticsearch-analysis-ik)  
 `./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v${es_version}/elasticsearch-analysis-ik-${es_version}.zip`
-2. [head插件](https://github.com/mobz/elasticsearch-head) 可实现ES集群状态查看、索引数据查看、ES DSL实现(增、删、改、查操作)
+2. [head插件](https://github.com/mobz/elasticsearch-head) 可实现ES集群状态查看、索引数据查看、ES DSL实现(增、删、改、查操作)  
 `docker run -p 9100:9100 mobz/elasticsearch-head:7`
-6. [marvel](https://www.elastic.co/downloads/marvel) 超赞的一个通过json查询的工具
-`bin/plugin -i elasticsearch/marvel/latest` localhost:9200/_plugin/marvel/sense/
-7. [SQL](https://github.com/NLPchina/elasticsearch-sql) 通过sql语法进行查询的工具
+6. [marvel](https://www.elastic.co/downloads/marvel) 超赞的一个通过json查询的工具localhost:9200/_plugin/marvel/sense/  
+`bin/plugin -i elasticsearch/marvel/latest` 
+7. [SQL](https://github.com/NLPchina/elasticsearch-sql) 通过sql语法进行查询的工具  
 `./bin/elasticsearch-plugin install https://github.com/NLPchina/elasticsearch-sql/releases/download/${es_version}.0/elasticsearch-sql-${es_version}.0.zip`
-3. [Cerebro](https://www.jianshu.com/p/433d821f9667) 查看ES集群堆内存使用率、CPU使用率、内存使用率、磁盘使用率。
+3. [Cerebro](https://www.jianshu.com/p/433d821f9667) 查看ES集群堆内存使用率、CPU使用率、内存使用率、磁盘使用率。  
 ```bash
 wget https://github.com/lmenezes/cerebro/releases/download/v${es_version}/cerebro-${es_version}.tgz
 tar xzf cerebro-${es_version}.tgz
