@@ -333,8 +333,6 @@ master0:name=mymaster,status=ok,address=172.21.0.9:6379,slaves=2,sentinels=4
 
 # 参考资料
 * [elk-stack](https://www.elastic.co/elk-stack)
-* [ELK搭建篇](https://www.cnblogs.com/cheyunhua/p/11238489.html)
-* [集中式日志系统 ELK 协议栈详解](https://developer.ibm.com/zh/articles/os-cn-elk/)
 * [grokdebug](https://grokdebug.herokuapp.com/)
 * [死磕Elasticsearch方法论认知清单](https://blog.csdn.net/newtelcom/article/details/80224379)
 * [ElasticSearch中文](https://www.elastic.co/guide/cn/index.html)
