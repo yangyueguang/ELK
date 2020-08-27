@@ -46,7 +46,7 @@ $ curl -XPOST -D- 'http://localhost:5601/api/saved_objects/index-pattern' \
 ```bash
 es_version=7.9.0
 rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch
-yum install java-1.8.0-openjdk
+rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
 yum install -y filebeat
 yum install -y redis
 yum install -y logstash
@@ -91,8 +91,8 @@ cd /usr/local/filebeat
 
 ## 安装Logstash
 ```bash
-wget https://artifacts.elastic.co/downloads/beats/logstash/logstash-${es_version}-linux-x86_64.tar.gz
-tar xzvf logstash-${es_version}-linux-x86_64.tar.gz
+wget https://artifacts.elastic.co/downloads/logstash/logstash-${es_version}.zip
+unzip logstash-${es_version}.zip
 mv logstash-${es_version} /usr/local/logstash
 /usr/local/logstash/bin/logstash -e 'input { stdin { } } output { stdout {} }'
 /usr/local/logstash/bin/logstash -f ./logstash.conf
