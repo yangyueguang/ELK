@@ -53,6 +53,9 @@ yum install -y elasticsearch
 yum install -y kibana
 yum install -y nginx httpd-tools
 java -version
+# 查看下XXX的安装目录
+rpm -ql XXX
+# 或者到官网下载最新的java jdk https://www.oracle.com/java/technologies/javase-downloads.html
 ```
 
 ## 安装Redis
