@@ -45,7 +45,6 @@ $ curl -XPOST -D- 'http://localhost:5601/api/saved_objects/index-pattern' \
 `vi /etc/yum.repos.d/centos.repo` 添加base.repo文件里的内容
 ```bash
 es_version=7.9.0
-rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch
 rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
 yum install -y filebeat
 yum install -y redis

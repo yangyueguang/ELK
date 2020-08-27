@@ -33,7 +33,7 @@ setup.kibana:
 
 # ---------------------------- Elasticsearch Output ----------------------------
 output.elasticsearch:
-    enabled: true
+    enabled: false
     #protocol: "https"
     #api_key: "id:api_key"
     hosts: ["127.0.0.1:9200"]
@@ -48,7 +48,7 @@ output.redis:
     timeout: 60
 # ------------------------------ Logstash Output -------------------------------
 output.logstash:
-    enabled: true
+    enabled: false
     hosts: ["logstash:5044"]
 # ------------------------------ console Output -------------------------------
 output.console:
