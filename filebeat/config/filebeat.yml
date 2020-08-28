@@ -1,25 +1,25 @@
 # https://www.elastic.co/guide/en/beats/filebeat/index.html
 filebeat.inputs:
-    - type: log
-        enabled: true
-        paths:
-            - /var/log/system.log
-            - /var/log/*.log
-            - /logs/*.log
-        include_lines: ['ERROR']
-        # exclude_lines: ['^DBG']
-        multiline.pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}'
-        multiline.negate: true
-        multiline.match: after
-        fields:
-            level: debug
-            review: 1
-    - type: container
-        enabled: true
-        include_lines: ['ERROR']
-        paths:
-            - /usr/share/filebeat/dockerlogs/*/*.log
-        close_timeout: 5m
+- type: log
+  enabled: true
+  paths:
+    - /var/log/system.log
+    - /var/log/*.log
+    - /logs/*.log
+  include_lines: ['ERROR']
+  # exclude_lines: ['^DBG']
+  multiline.pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}'
+  multiline.negate: true
+  multiline.match: after
+  fields:
+    level: debug
+    review: 1
+- type: container
+  enabled: true
+  include_lines: ['ERROR']
+  paths:
+    - /usr/share/filebeat/dockerlogs/*/*.log
+  close_timeout: 5m
 
 filebeat.config.modules:
   path: ${path.config}/modules.d/*.yml
