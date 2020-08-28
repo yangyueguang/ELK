@@ -1,7 +1,7 @@
 version: '3.5'
 services:
     elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:latest
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
         volumes:
             - ./elasticsearch/data:/usr/share/elasticsearch/data
             - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
@@ -16,7 +16,7 @@ services:
             discovery.type: single-node
 
     logstash:
-        image: docker.elastic.co/logstash/logstash:latest
+        image: docker.elastic.co/logstash/logstash:7.9.0
         volumes:
             - ./logstash/pipeline:/usr/share/logstash/pipeline
             - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
@@ -31,7 +31,7 @@ services:
            LS_JAVA_OPTS: "-Xmx256m -Xms256m"
 
     kibana:
-        image: docker.elastic.co/kibana/kibana:latest
+        image: docker.elastic.co/kibana/kibana:7.9.0
         ports:
             - "5601:5601"
         networks:
@@ -42,7 +42,7 @@ services:
             - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
 
     filebeat:
-        image: docker.elastic.co/beats/filebeat:latest
+        image: docker.elastic.co/beats/filebeat:7.9.0
         networks:
             - elk
         hostname: filebeat
