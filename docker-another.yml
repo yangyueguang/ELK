@@ -83,14 +83,14 @@ services:
     es_plugin_hq:
         image: elastichq/elasticsearch-hq
         ports:
-            - 5000:5000
+            - 5001:5000
         networks:
             elk:
 
     es_plugin_head:
         image: mobz/elasticsearch-head:7
         ports:
-            - 9100:9100
+            - 9101:9100
         networks:
             elk:
 
