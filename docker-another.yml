@@ -51,6 +51,7 @@ services:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml
+            #- /Users/supers/Desktop/root.log:/usr/share/filebeat/dockerlogs/*/*.log
 
     redis:
         image: redis:latest
