@@ -9,7 +9,7 @@ services:
       - ./elasticsearch/data:/usr/share/elasticsearch/data
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     environment:
-      ES_JAVA_OPTS: "-Xmx256m -Xms256m" # 堆内存此处采用256M可以选择1G
+      ES_JAVA_OPTS: "-Xmx1g -Xms1g" # 堆内存此处采用256M可以选择1G
       ELASTIC_PASSWORD: changeme
       discovery.type: single-node
     networks:
@@ -24,7 +24,7 @@ services:
       - ./logstash/pipeline:/usr/share/logstash/pipeline
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
     environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      LS_JAVA_OPTS: "-Xmx1g -Xms1g"
     networks:
       - elk
     depends_on:
