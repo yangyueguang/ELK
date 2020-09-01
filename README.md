@@ -23,6 +23,12 @@
 
 :white_check_mark: Elasticsearch-HQ: ES集群管理
 
+:white_check_mark: MySQL: 数据库
+
+:white_check_mark: RabbitMQ: 消息队列
+
+:white_check_mark: 可扩展Redis集群、ES集群、RabbitMQ集群
+
 # 接口说明
 * 8001: Gitlab root:hb123456
 * 8003: Code-server root:hb123456
@@ -34,6 +40,8 @@
 * 5601: Kibana elastic:changeme
 * 6379: Redis
 * 5001: ES-HQ
+* 5672: RabbitMQ
+* 3306: MySQL
 
 # Docker与本地部署
 * [1. ELK结构框架](#ELK结构框架)
@@ -180,7 +188,7 @@ make
 make install
 ## 配置nginx 
 vi /etc/nginx/nginx.conf
-# include /etc/nginx/conf.d/*conf_  
+# include /etc/nginx/conf.d/*conf
 # 启动 Nginx 服务  
 nginx -t
 nginx -s reload

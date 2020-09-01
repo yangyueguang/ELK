@@ -66,6 +66,29 @@ services:
             - 16379:16379
         volumes:
             - ./redis/conf/redis.conf:/etc/redis/redis.conf
+            - ./redis/data:/data
+
+    mysql:
+        image: mysql:latest
+        restart: always
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_DATABASE: abc
+            MYSQL_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: root
+            TZ: Asia/Shanghai
+
+    rabbitmq:
+        hostname: rabbitmq
+        image: rabbitmq:latest
+        environment:
+            RABBITMQ_DEFAULT_USER: admin
+            RABBITMQ_DEFAULT_PASS: admin
+        ports:
+            - 15672:15672 # 界面端口
+            - 5672:5672   # 服务端口
 
     nginx:
         image: nginx:latest
