@@ -1,0 +1,56 @@
+#-------------------------------ci 范本2 ------------------------------#
+# 这个是 idps stable ci样本解释
+# 这个范本 重点在 给大家一个 idps 配置 ci 说明
+stages:   # 定义构建阶段 非必须
+    - deploy
+    - publish
+
+  # 这里预先定义以后需要用到的变量
+  variables:    # 定义 构建变量  非必须
+    GIT_STRATEGY: none
+    SERVER: 127.0.0.1
+    PORT: 58431
+    USER: duser
+    DEPLOY_PATH: '/data/idps_test/deploy_idps_stable'
+    RELEASE_DEPLOY_CMD_BRANCH_NAME: test_release_2.0
+
+  before_script:    # 定义在每个job之前运行的命令 非必须
+    - export ROOT_PATH=$(pwd)
+    - echo 'root path:' $ROOT_PATH
+
+  deploy_stage:   # 阶段名称 必须
+    stage: deploy   # 所属阶段
+    tags:
+    - gitlab-runner-01  #这里配置的是gitlab runner注册时候写的tag 可以指定哪个tag运行。如果runner没有配置 tag，这个可以不写
+    # 下面脚本中，会使用ssh命令登录到服务器，并在服务器执行 tools/deploy_cmd.py 脚本，展开部署。对于新任务，我们只需要 修改 服务器登录信息即可。N
+    script:   # runner执行的命令 必须
+      - cmd='cd '${DEPLOY_PATH}' && git reset --hard origin/'${CI_COMMIT_REF_NAME}' && git pull > pull_msg.txt && python tools/deploy_cmd.py '${RELEASE_DEPLOY_CMD_BRANCH_NAME}
+      - echo $cmd
+
+      # 场景1: 采用跳板机方式： 第一步，将 172.17.132.130 机器的22 号端口 打洞到runner 机器的port 端口。 第二步，runner上，登录 172.17.132.130 执行 cmd命令
+      - ssh -f -p $PORT -o "StrictHostKeyChecking no" ci_test@jumper-huabei2-vpc.datagrand.com -L $PORT:172.17.132.130:22 -N   # 需要修改成项目实际服务器地址，端口  。
+      - ssh -o "StrictHostKeyChecking no" $USER@$SERVER -p $PORT $cmd   # 需要修改成项目实际服务器地址，端口
+
+      # 场景2: 直接登录方式： 直接从runner 访问 部署服务器，执行cmd 命令
+      - ssh -o "StrictHostKeyChecking no" $USER@$SERVER -p $PORT $cmd   # 需要修改成项目实际服务器地址，端口  。
+
+      # 实际案例：
+      - cmd='cd '${DEPLOY_PATH}' && git reset --hard origin/'${CI_COMMIT_REF_NAME}' && sudo git pull > pull_msg.txt && python tools/deploy_cmd.py '${RELEASE_DEPLOY_CMD_BRANCH_NAME}
+      - echo $cmd
+      - ssh -o "StrictHostKeyChecking no" -f -p 22 chending@103.229.214.112 -4 -L $PORT:10.100.16.170:22 -N
+      # - ssh -o "StrictHostKeyChecking no" -f -p 22 chending@103.229.214.112 -4 -L 58431:10.100.16.170:22 -N
+      - ssh -o "StrictHostKeyChecking no" $USER@$SERVER -p $PORT $cmd   # 需要修改成项目实际服务器地址，端口
+      # - ssh -o "StrictHostKeyChecking no" duser@$127.0.0.1 -p 58431 $cmd   # 需要修改成项目实际服务器地址，端口  。
+
+      # 上面 StrictHostKeyChecking=no 表示不确认主机公钥。如果连接的 server key 不在本地，则自动添加。
+
+    when: manual # 定义何时开始job。可以是on_success，on_failure，always或者 manual(手动)  非必须
+    allow_failure: false  # 允许job失败。失败的job不影响commit状态  非必须
+
+  publish_stage:
+    stage: publish
+    script:
+      - echo "----------init test environment files----------"
+      - echo "some data"
+    when: manual  # 定义何时开始job。可以是on_success，on_failure，always或者 manual(手动)  非必须
+    allow_failure: false  # 允许job失败。失败的job不影响commit状态  非必须

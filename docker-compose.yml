@@ -1,47 +1,148 @@
 version: '3.5'
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - ./elasticsearch/data:/usr/share/elasticsearch/data
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-    environment:
-      ES_JAVA_OPTS: "-Xmx1g -Xms1g" # 堆内存此处采用256M可以选择1G
-      ELASTIC_PASSWORD: changeme
-      discovery.type: single-node
-    networks:
-      - elk
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
+        volumes:
+            - ./elasticsearch/data:/usr/share/elasticsearch/data
+            - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+        ports:
+            - "9200:9200"
+            - "9300:9300"
+        networks:
+            - elk
+        environment:
+            ES_JAVA_OPTS: "-Xmx1g -Xms1g" # 堆内存此处采用256M可以选择1G
+            ELASTIC_PASSWORD: changeme
+            discovery.type: single-node
 
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.9.0
-    ports:
-      - "5000:5000"
-      - "9600:9600"
-    volumes:
-      - ./logstash/pipeline:/usr/share/logstash/pipeline
-      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
-    environment:
-      LS_JAVA_OPTS: "-Xmx1g -Xms1g"
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
+    logstash:
+        image: docker.elastic.co/logstash/logstash:7.9.0
+        volumes:
+            - ./logstash/pipeline:/usr/share/logstash/pipeline
+            - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+        ports:
+            - "5000:5000"
+            - "9600:9600"
+        networks:
+            - elk
+        depends_on:
+            - elasticsearch
+        environment:
+            LS_JAVA_OPTS: "-Xmx1g -Xms1g"
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.9.0
-    volumes:
-      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
-    ports:
-      - "5601:5601"
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
+    kibana:
+        image: docker.elastic.co/kibana/kibana:7.9.0
+        ports:
+            - 5601:5601
+        networks:
+            - elk
+        depends_on:
+            - elasticsearch
+        volumes:
+            - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+
+    filebeat:
+        image: docker.elastic.co/beats/filebeat:7.9.0
+        networks:
+            - elk
+        hostname: filebeat
+        container_name: filebeat
+        user: root
+        restart: always
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml
+            #- /Users/supers/Desktop/root.log:/usr/share/filebeat/dockerlogs/*/*.log
+
+    redis:
+        image: redis:latest
+        networks:
+            elk:
+        hostname: redis
+        container_name: redis
+        restart: always
+        ports:
+            - 6379:6379
+            - 16379:16379
+        volumes:
+            - ./redis/conf/redis.conf:/etc/redis/redis.conf
+
+    nginx:
+        image: nginx:latest
+        networks:
+            elk:
+        hostname: nginx
+        container_name: nginx
+        restart: always
+        ports:
+            - 8080:80
+            - 443:443
+        volumes:
+            - ./nginx/logs:/var/log/nginx
+            - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+            - ./nginx/conf/conf.d:/etc/nginx/conf.d
+
+    es_plugin_hq:
+        image: elastichq/elasticsearch-hq
+        ports:
+            - 5001:5000
+        networks:
+            elk:
+
+    gitlab:
+        image: gitlab/gitlab-ce:12.9.3-ce.0
+        restart: always
+        container_name: "gitlab"
+        hostname: 'server.abc.com'
+        environment:
+            GITLAB_OMNIBUS_CONFIG: |
+                external_url 'http://100.100.20.222:8001' # 修改绑定域名和容器本身web端口（同时修改）
+                gitlab_rails['gitlab_shell_ssh_port']=22 # 仅仅修改git clone 提示端口，默认ssh端口还是22
+        ports:
+            - '8001:8001'
+            - '20082:22'
+        volumes:
+            - ./gitlab/config:/etc/gitlab
+            - ./gitlab/logs:/var/log/gitlab
+            - ./gitlab/data:/var/opt/gitlab
+         #   - /etc/localtime:/etc/localtime
+
+    gitlab-runner:
+        image: gitlab/gitlab-runner:v12.9.0
+        container_name: "gitlab-runner"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./.ssh:/home/gitlab-runner/.ssh
+            - ./gitlab-runner/config:/etc/gitlab-runner
+            - ./gitlab-runner/home:/home/gitlab-runner
+
+    code-server:
+        # image: codercom/code-server:3.1.1   # base image
+        image: caturbhuja/vscode-server-3.1.1:python3.6-base
+        container_name: "code-server"
+        volumes:
+            - ./.ssh:/home/coder/.ssh
+            - ./code_server/project:/home/coder/project
+        ports:
+            - 8003:8080
+        environment:
+            PASSWORD: hb123456
+
+    registry:
+        image: registry:2.7.1
+        ports:
+            - 8004:5000
+        volumes:
+            - ./registry:/var/lib/registry
+
+    portainer:
+        image: portainer/portainer
+        restart: always
+        ports:
+            - 9000:9000
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
-  elk:
-    driver: bridge
-
+    elk:
+        driver: bridge

@@ -1,16 +1,59 @@
-# ELK Docker与本地部署
-* [1. 安装 JDK](#安装JDK)
-* [2. 安装 Redis](#安装Redis)
-* [3. 安装 Filebeat](#安装Filebeat)
-* [4. 安装 Logstash](#安装Logstash)
-* [5. 安装 Elasticsearch](#安装Elasticsearch)
-* [6. 安装 Kibana](#安装Kibana)
-* [7. 安装 Nginx](#安装Nginx)
-* [8. 最终验证](#最终验证)
-* [9. redis 集群部署](#部署redis哨兵)
-* [10. 参考资料](#参考资料)
+# 部署开发辅助工具
+:white_check_mark: Gitlab: 代码管理仓库
 
-# ELK结构框架
+:white_check_mark: Gitlab-runner: gitlab中cicd的runner
+
+:white_check_mark: Code-server: 浏览器版vscode
+
+:white_check_mark: Registry: dockerhub仓库
+
+:white_check_mark: Portainer: portainer容器管理
+
+:white_check_mark: Logstash: 日志收集管道
+
+:white_check_mark: Elasticsearch: 分布式搜索引擎
+
+:white_check_mark: Filebeat: 日志收集客户端
+
+:white_check_mark: Kibana: 数据展示界面
+
+:white_check_mark: Redis: 分布式数据存储
+
+:white_check_mark: Nginx: 端口转发与反向代理
+
+:white_check_mark: Elasticsearch-HQ: ES集群管理
+
+# 接口说明
+* 8001: Gitlab root:hb123456
+* 8003: Code-server root:hb123456
+* 8004: Registry 
+* 9000: Portainer 
+* 5000: Logstash TCP input.
+* 9200: Elasticsearch elastic:changeme
+* 9300: Elasticsearch TCP transport
+* 5601: Kibana elastic:changeme
+* 6379: Redis
+* 5001: ES-HQ
+
+# Docker与本地部署
+* [1. ELK结构框架](#ELK结构框架)
+* [2. 基本流程](#基本流程)
+* [3. 安装 JDK](#安装JDK)
+* [4. 安装 Redis](#安装Redis)
+* [5. 安装 Filebeat](#安装Filebeat)
+* [6. 安装 Logstash](#安装Logstash)
+* [7. 安装 Elasticsearch](#安装Elasticsearch)
+* [8. 安装 Kibana](#安装Kibana)
+* [9. 安装 Nginx](#安装Nginx)
+* [10. 安装Gitlab-runner](#安装Gitlab-runner)
+* [11. ES插件安装](#ES插件安装)
+* [12. ElasticSearc-sql](#使用Logstash从MySQL中同步数据到ElasticSearch)
+* [13. 最终验证](#最终验证)
+* [14. redis 集群部署](#部署redis哨兵)
+* [15. 注意事项](#注意事项)
+* [16. 参考资料](#参考资料)
+
+## ELK结构框架
 ![](https://s2.ax1x.com/2020/01/09/lWqbPH.png)
 * Elasticsearch是一个分布式搜索分析引擎，稳定、可水平扩展、易于管理是它的主要设计初衷;
 * Logstash是一个灵活的数据收集、加工和传输的管道软件;
@@ -25,22 +68,6 @@
 5. Kibana是ElasticSearch可视化界面插件。
 6. 部署到服务器上之后通过Nginx端口转发与反向代理把服务暴露出去。
 
-## 默认端口
-* 5000: Logstash TCP input.
-* 9200: Elasticsearch HTTP
-* 9300: Elasticsearch TCP transport
-* 5601: Kibana
-
-Create an index pattern via the Kibana API:
-```bash
-$ curl -XPOST -D- 'http://localhost:5601/api/saved_objects/index-pattern' \
-    -H 'Content-Type: application/json' \
-    -H 'kbn-version: 7.8.0' \
-    -u elastic:changeme \
-    -d '{"attributes":{"title":"logstash-*","timeFieldName":"@timestamp"}}'
-```
-
-# 本地部署
 ## 安装JDK
 `vi /etc/yum.repos.d/centos.repo` 添加base.repo文件里的内容
 ```bash
@@ -162,6 +189,87 @@ sudo systemctl start nginx
 open http://IP:5601
 ```
 
+## 安装Gitlab-runner
+```
+sudo curl -L --output /usr/local/bin/gitlab-runner https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64
+sudo chmod +x /usr/local/bin/gitlab-runner
+#安装docker，可选，如果执行器选择docker，则需要安装，如果可以，最好装个docker加速器
+curl -sSL https://get.docker.com/ | sh  
+#添加一个普通用户权限，用来运行gitlab runner,然后运行gitlab runner
+sudo useradd --comment 'GitLab Runner' --create-home gitlab-runner --shell /bin/bash
+sudo gitlab-runner install --user=gitlab-runner --working-directory=/home/gitlab-runner
+sudo gitlab-runner start
+```
+首次使用，需要进入容器内部注册
+```
+[root@localhost ~]# gitlab-runner register   #注册runner到gitlab
+Runtime platform                                    arch=amd64 os=linux pid=12351 revision=d0b76032 version=12.0.2
+Running in system-mode.                            
+Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com/): 
+http://server.muguayun.top:20080/
+Please enter the gitlab-ci token for this runner:
+yx6oVQYxrLxczyazysF9
+Please enter the gitlab-ci description for this runner:
+[localhost.localdomain]: canon_runner
+Please enter the gitlab-ci tags for this runner (comma separated): 
+gitlab-runner-01
+Registering runner... succeeded                     runner=yx6oVQYx
+Please enter the executor: docker, docker-ssh, ssh, docker-ssh+machine, parallels, shell, virtualbox, docker+machine, kubernetes: 
+#设置runner运行方式(推荐选shell，更灵活)。 ⚠️ 如果这里选择docker，再打包时，runner内部会重新启动一个docker镜像，脚本内部命令会在重新启动的镜像内执行。
+docker
+Please enter the default Docker image (e.g. ruby:2.6):
+centos:7
+Runner registered successfully. Feel free to start it, but if it's running already the config should be automatically reloaded! 
+[root@localhost ~]# gitlab-runner restart  #重启下gitlab runner
+[root@localhost ~]# gitlab-runner list  #查看当前gitlab runner
+Runtime platform                                    arch=amd64 os=linux pid=12379 revision=d0b76032 version=12.0.2
+Listing configured runners                          ConfigFile=/etc/gitlab-runner/config.toml
+gitlab-runner-01                                    Executor=docker Token=KAsxjVbByKauYnNMSKHY URL=http://192.168.31.130/
+```
+gitlab注册
+```shell
+# Git global setup
+git config --global user.name "cbd"
+git config --global user.email "2829969299@qq.com"
+# Push an existing folder
+git init
+git remote add origin ssh://git@abc.git
+git add .
+git commit -m "Initial commit"
+git push -u origin master
+```
+备注：
+1. runner在运行时，默认使用 gitlab-runner用户。
+2. 所以涉及到 使用ssh权限，需要把 gitlab-runner的公钥添加到部署服务器，免密登录。
+3. 需要手动修改/home/gitlab-runner 文件夹权限 为 777。
+4. gitlab runner配置文件在/etc/gitlab-runner/config.toml
+5. ssh-keygen -t rsa -C "your.email@example.com" -b 4096
+
+## ES插件安装
+1. [HQ监控](https://github.com/royrusso/elasticsearch-HQ) 管理ES集群以及通过web界面来查询操作,支持SQL转DSL  
+`docker run -p 5000:5000 elastichq/elasticsearch-hq`  
+`http://es_user:es_password@es_ip:es_port`
+2. [ik分词](https://github.com/medcl/elasticsearch-analysis-ik)  
+`./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v${es_version}/elasticsearch-analysis-ik-${es_version}.zip`
+3. [SQL](https://github.com/NLPchina/elasticsearch-sql) 通过sql语法进行查询的工具  
+`./bin/elasticsearch-plugin install https://github.com/NLPchina/elasticsearch-sql/releases/download/${es_version}.0/elasticsearch-sql-${es_version}.0.zip`
+4. [Cerebro](https://www.jianshu.com/p/433d821f9667) 查看ES集群堆内存使用率、CPU使用率、内存使用率、磁盘使用率。  
+```bash
+wget https://github.com/lmenezes/cerebro/releases/download/v${es_version}/cerebro-${es_version}.tgz
+tar xzf cerebro-${es_version}.tgz
+# 指定一个端口启动
+cerebro-${es_version}/bin/cerebro -Dhttp.port=8088
+```
+
+## 使用Logstash从MySQL中同步数据到ElasticSearch
+```bash
+bin/logstash-plugin install logstash-input-jdbc
+bin/logstash-plugin install logstash-output-elasticsearch
+wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.46.zip --no-check-certificate
+unzip mysql-connector-java-5.1.46.zip
+# 这里面有一个MySQL依赖包jar，用于配置logstash里面的这个参数jdbc_driver_library
+```
+
 ## 最后验证
 编辑nginx配置文件，修改以下内容（在http模块下添加）
 ```bash
@@ -184,30 +292,6 @@ access_log  logs/elk.access.log  json;
 运行看看效果如何`logstash -f /etc/logstash/conf.d/redis-out.conf`  
 因为ES保存日志是永久保存，所以需要定期删除一下日志，下面命令为删除指定时间前的日志  
 `curl -X DELETE http://xx.xx.com:9200/logstash-*-`date +%Y-%m-%d -d "-$n days"`
-
-## ES插件安装
-1. [HQ监控](https://github.com/royrusso/elasticsearch-HQ) 管理ES集群以及通过web界面来查询操作,支持SQL转DSL  
-`docker run -p 5000:5000 elastichq/elasticsearch-hq`
-2. [ik分词](https://github.com/medcl/elasticsearch-analysis-ik)  
-`./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v${es_version}/elasticsearch-analysis-ik-${es_version}.zip`
-3. [SQL](https://github.com/NLPchina/elasticsearch-sql) 通过sql语法进行查询的工具  
-`./bin/elasticsearch-plugin install https://github.com/NLPchina/elasticsearch-sql/releases/download/${es_version}.0/elasticsearch-sql-${es_version}.0.zip`
-4. [Cerebro](https://www.jianshu.com/p/433d821f9667) 查看ES集群堆内存使用率、CPU使用率、内存使用率、磁盘使用率。  
-```bash
-wget https://github.com/lmenezes/cerebro/releases/download/v${es_version}/cerebro-${es_version}.tgz
-tar xzf cerebro-${es_version}.tgz
-# 指定一个端口启动
-cerebro-${es_version}/bin/cerebro -Dhttp.port=8088
-```
-
-## 使用Logstash从MySQL中同步数据到ElasticSearch
-```bash
-bin/logstash-plugin install logstash-input-jdbc
-bin/logstash-plugin install logstash-output-elasticsearch
-wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.46.zip --no-check-certificate
-unzip mysql-connector-java-5.1.46.zip
-# 这里面有一个MySQL依赖包jar，用于配置logstash里面的这个参数jdbc_driver_library
-```
 
 # 部署redis哨兵
 ## 结构图
@@ -327,8 +411,93 @@ master0:name=mymaster,status=ok,address=172.21.0.9:6379,slaves=2,sentinels=4
 关闭` 172.21.0.9（主）`的` redis01 `，发现客户端请求流量打到` 172.21.0.9（主）`的` app01 `上，这时` redis02 `由slave变成master，服务可以正常访问；
 此时再启动redis01，redis01不会接管主成为master，即redis02还是主，master不会因为redis01的重启而飘移；
 
+# 注意事项
+1. 如果使用registry所有服务器需要如下添加配置
+```shell
+ vim /etc/docker/daemon.json
+ {
+    "insecure-registries": [
+        "server.abc.com:8004"     # 注意，此处的 host 需要对应 实际服务器.修改后需要重启docker服务
+    ]
+ }
+```
+2. filebeat/config/filebeat.yml 权限修改：`chmod go-w filebeat.yml`
+3. elasticsearch/data要可写 权限修改：`chmod 777 elasticsearch/data`
+
+Create an index pattern via the Kibana API:
+```bash
+$ curl -XPOST -D- 'http://localhost:5601/api/saved_objects/index-pattern' \
+    -H 'Content-Type: application/json' \
+    -H 'kbn-version: 7.8.0' \
+    -u elastic:changeme \
+    -d '{"attributes":{"title":"logstash-*","timeFieldName":"@timestamp"}}'
+```
+
+修改容器并更新为新的名字
+```shell
+    docker commit -p container image_name:tag  
+    docker commit -p 02821380a8c5 code-server-3.1.1:ningboyinhang_image  
+``` 
+
+DSL
+```json5
+{
+    "query":{
+        "bool":{
+            "must":[
+
+            ],
+            "must_not":[
+
+            ],
+            "should":[
+
+            ]
+        }
+    },
+    "aggs":{
+        "my_agg":{
+            "terms":{
+                "field":"user",
+                "size":10
+            }
+        }
+    },
+    "highlight":{
+        "pre_tags":[
+            "<em>"
+        ],
+        "post_tags":[
+            "</em>"
+        ],
+        "fields":{
+            "body":{
+                "number_of_fragments":1,
+                "fragment_size":20
+            },
+            "title":{
+
+            }
+        }
+    },
+    "size":20,
+    "from":100,
+    "_source":[
+        "title",
+        "id"
+    ],
+    "sort":[
+        {
+            "_id":{
+                "order":"desc"
+            }
+        }
+    ]
+}
+```
 
 # 参考资料
+* [Gitlab Runner介绍安装](https://www.jianshu.com/p/f5f4f2110277)
 * [elk-stack](https://www.elastic.co/elk-stack)
 * [grokdebug](https://grokdebug.herokuapp.com/)
 * [死磕Elasticsearch方法论认知清单](https://blog.csdn.net/newtelcom/article/details/80224379)
