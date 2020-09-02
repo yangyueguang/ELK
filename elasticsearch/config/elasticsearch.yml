@@ -8,13 +8,14 @@ node.data: true
 network.host: 0.0.0.0
 http.port: 9200
 transport.tcp.port: 9300
+transport.tcp.compress: true
 # trial
 xpack.license.self_generated.type: basic
 xpack.security.enabled: true
 xpack.monitoring.collection.enabled: true
 
-#path.data: /data/es-data
-#path.logs: /var/log/elasticsearch/
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
 ## 配置内存使用用交换分区
 #bootstrap.memory_lock: true
 ## 增加新的参数，这样head插件可以访问es (5.x版本，如果没有可以自己手动加)
