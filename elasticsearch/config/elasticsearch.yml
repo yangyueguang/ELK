@@ -11,7 +11,8 @@ transport.tcp.port: 9300
 transport.tcp.compress: true
 # trial
 xpack.license.self_generated.type: basic
-xpack.security.enabled: true
+xpack.security.enabled: false
+xpack.security.transport.ssl.enabled: false
 xpack.monitoring.collection.enabled: true
 
 path.data: /usr/share/elasticsearch/data
