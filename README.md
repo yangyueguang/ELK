@@ -53,13 +53,14 @@
 * [7. 安装 Elasticsearch](#安装Elasticsearch)
 * [8. 安装 Kibana](#安装Kibana)
 * [9. 安装 Nginx](#安装Nginx)
-* [10. 安装Gitlab-runner](#安装Gitlab-runner)
-* [11. ES插件安装](#ES插件安装)
-* [12. ElasticSearc-sql](#使用Logstash从MySQL中同步数据到ElasticSearch)
-* [13. 最终验证](#最终验证)
-* [14. redis 集群部署](#部署redis哨兵)
-* [15. 注意事项](#注意事项)
-* [16. 参考资料](#参考资料)
+* [10. 安装MySQL](#安装MySQL)
+* [11. 安装Gitlab-runner](#安装Gitlab-runner)
+* [12. ES插件安装](#ES插件安装)
+* [13. ElasticSearc-sql](#使用Logstash从MySQL中同步数据到ElasticSearch)
+* [14. 最终验证](#最终验证)
+* [15. redis 集群部署](#部署redis哨兵)
+* [16. 注意事项](#注意事项)
+* [17. 参考资料](#参考资料)
 
 ## ELK结构框架
 ![](https://s2.ax1x.com/2020/01/09/lWqbPH.png)
@@ -195,6 +196,40 @@ nginx -s reload
 sudo systemctl enable nginx
 sudo systemctl start nginx
 open http://IP:5601
+```
+
+## 安装MySQL
+```shell
+wget https://repo.mysql.com//mysql80-community-release-el8-1.noarch.rpm
+yum localinstall mysql80-community-release-el8-1.noarch.rpm -y
+yum -y install mysql-community-server
+yum install -y mariadb-server
+systemctl start mariadb.service
+systemctl enable mariadb.service
+systemctl start mysqld
+systemctl enable mysqld
+systemctl daemon-reload
+cat /var/log/mysqld.log | grep password # 查看数据库的密码
+mysql -uroot -p
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '你的密码'; # 修改密码
+mysql> exit; # 退出再次登陆
+# 进行远程访问的授权
+mysql -uroot -p
+mysql> create user 'root'@'%' identified with mysql_native_password by '你的密码';
+mysql> grant all privileges on *.* to 'root'@'%' with grant option;
+mysql> flush privileges;
+mysql> exit;
+# 打开防火墙开放3306端口
+systemctl start firewalld
+firewall-cmd --zone=public --add-port=3306/tcp --permanent
+firewall-cmd --reload
+# 配置默认编码为UTF-8 修改/etc/my.cnf配置文件，在[mysqld]下添加编码配置：
+character_set_server=utf8
+init_connect='SET NAMES utf8'
+# 编辑保存完重启mysql服务 
+systemctl restart mysqld
+mysql> show variables like '%character%'; # 查看下编码
+# 如果是使用阿里云服务，需要在安全规则组打开3306端口
 ```
 
 ## 安装Gitlab-runner
@@ -467,3 +502,4 @@ DSL
 * [死磕Elasticsearch方法论认知清单](https://blog.csdn.net/newtelcom/article/details/80224379)
 * [ElasticSearch中文](https://www.elastic.co/guide/cn/index.html)
 * [ElasticSearch中文社区](https://elasticsearch.cn/)
+* [安装MySQL](https://www.cnblogs.com/lemon-feng/p/11233227.html)
