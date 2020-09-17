@@ -494,6 +494,16 @@ DSL
     ]
 }
 ```
+部署sentry
+```bash
+docker run -d --name sentry-redis --restart=always redis
+docker run -d --name sentry-postgres -e POSTGRES_PASSWORD=secret -e POSTGRES_USER=sentry --restart=always postgres
+key=`docker run --rm sentry config generate-secret-key`
+docker run -it --rm -e SENTRY_SECRET_KEY='${key}' --link sentry-postgres:postgres --link sentry-redis:redis sentry upgrade
+docker run -d -p 9000:9000 --name my-sentry -e SENTRY_SECRET_KEY='${key}' --link sentry-redis:redis --link sentry-postgres:postgres --restart=always sentry
+docker run -d --name sentry-cron -e SENTRY_SECRET_KEY='${key}' --link sentry-postgres:postgres --link sentry-redis:redis sentry run cron
+docker run -d --name sentry-worker-1 -e SENTRY_SECRET_KEY='${key}' --link sentry-postgres:postgres --link sentry-redis:redis sentry run worker
+```
 
 # 参考资料
 * [Gitlab Runner介绍安装](https://www.jianshu.com/p/f5f4f2110277)
