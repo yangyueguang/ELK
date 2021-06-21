@@ -1,0 +1,37 @@
+version: '3'
+services:
+  master:
+    image: mysql:5.7.32
+    restart: always
+    ports:
+      - 3307:3306
+    volumes:
+      - ./master.conf:/etc/mysql/my.cnf
+    environment:
+      - privileged=true 
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=12345678
+      - MYSQL_ROOT_PASSWORD=12345678
+  slave:
+    image: mysql:5.7.32
+    restart: always
+    ports:
+      - 3308:3306
+    volumes:
+      - ./slave.conf:/etc/mysql/my.cnf
+    environment:
+      - privileged=true 
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=12345678
+      - MYSQL_ROOT_PASSWORD=12345678
+
+  haproxy:
+    image: haproxy:latest
+    restart: always
+    ports:
+      - 3309:3309
+      - 8080:8080
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+
+
