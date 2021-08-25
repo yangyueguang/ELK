@@ -46,21 +46,22 @@
 # Docker与本地部署
 * [1. ELK结构框架](#ELK结构框架)
 * [2. 基本流程](#基本流程)
-* [3. 安装 JDK](#安装JDK)
-* [4. 安装 Redis](#安装Redis)
-* [5. 安装 Filebeat](#安装Filebeat)
-* [6. 安装 Logstash](#安装Logstash)
-* [7. 安装 Elasticsearch](#安装Elasticsearch)
-* [8. 安装 Kibana](#安装Kibana)
-* [9. 安装 Nginx](#安装Nginx)
-* [10. 安装MySQL](#安装MySQL)
-* [11. 安装Gitlab-runner](#安装Gitlab-runner)
-* [12. ES插件安装](#ES插件安装)
-* [13. ElasticSearc-sql](#使用Logstash从MySQL中同步数据到ElasticSearch)
-* [14. 最终验证](#最终验证)
-* [15. redis 集群部署](#部署redis哨兵)
-* [16. 注意事项](#注意事项)
-* [17. 参考资料](#参考资料)
+* [3. 安装 docker](#安装docker)
+* [4. 安装 JDK](#安装JDK)
+* [5. 安装 Redis](#安装Redis)
+* [6. 安装 Filebeat](#安装Filebeat)
+* [7. 安装 Logstash](#安装Logstash)
+* [8. 安装 Elasticsearch](#安装Elasticsearch)
+* [9. 安装 Kibana](#安装Kibana)
+* [10. 安装 Nginx](#安装Nginx)
+* [11. 安装MySQL](#安装MySQL)
+* [12. 安装Gitlab-runner](#安装Gitlab-runner)
+* [13. ES插件安装](#ES插件安装)
+* [14. ElasticSearc-sql](#使用Logstash从MySQL中同步数据到ElasticSearch)
+* [15. 最终验证](#最终验证)
+* [16. redis 集群部署](#部署redis哨兵)
+* [17. 注意事项](#注意事项)
+* [18. 参考资料](#参考资料)
 
 ## ELK结构框架
 ![](https://s2.ax1x.com/2020/01/09/lWqbPH.png)
@@ -76,6 +77,20 @@
 4. ElasticSearch提供日志存储和检索。
 5. Kibana是ElasticSearch可视化界面插件。
 6. 部署到服务器上之后通过Nginx端口转发与反向代理把服务暴露出去。
+
+## 安装docker
+```bash
+yum install docker docker-compose docker-ce docker-ce-cli containerd.io
+systemctl stop docker
+rm -rf /var/lib/docker
+vim /etc/sysconfig/docker-storage  # 修改docker安装路径 
+vim /usr/lib/systemd/system/docker.service 
+vim /etc/sysconfig/docker
+chown +R root:root docker
+systemctl daemon-reload 
+systemctl restart docker.service
+systemctl restart docker
+```
 
 ## 安装JDK
 `vi /etc/yum.repos.d/centos.repo` 添加base.repo文件里的内容
@@ -209,6 +224,8 @@ systemctl enable mariadb.service
 systemctl start mysqld
 systemctl enable mysqld
 systemctl daemon-reload
+./mysqld --defaults-file=/etc/my.cnf --basedir=/usr/local/mysql/ --datadir=/data/mysql/ --user=mysql --initialize
+service mysql start
 cat /var/log/mysqld.log | grep password # 查看数据库的密码
 mysql -uroot -p
 mysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '你的密码'; # 修改密码
