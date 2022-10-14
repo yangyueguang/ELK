@@ -1,0 +1,77 @@
+<clickhouse>
+    <listen_host>::</listen_host>
+    <listen_host>0.0.0.0</listen_host>
+    <listen_try>1</listen_try>
+    <timezone>Asia/Shanghai</timezone>
+    <remote_servers>
+        <cluster>
+            <shard>
+                <internal_replication>true</internal_replication>
+                <replica>
+                    <host>server01</host>
+                    <port>9000</port>
+                    <user>default</user>
+                    <password></password>
+                </replica>
+                <replica>
+                    <host>server03</host>
+                    <port>9001</port>
+                    <user>default</user>
+                    <password></password>
+                </replica>
+            </shard>
+            <shard>
+                <internal_replication>true</internal_replication>
+                <replica>
+                    <host>server02</host>
+                    <port>9000</port>
+                    <user>default</user>
+                    <password></password>
+                </replica>
+                <replica>
+                    <host>server01</host>
+                    <port>9001</port>
+                    <user>default</user>
+                    <password></password>
+                </replica>
+            </shard>
+            <shard>
+                <internal_replication>true</internal_replication>
+                <replica>
+                    <host>server03</host>
+                    <port>9000</port>
+                    <user>default</user>
+                    <password></password>
+                </replica>
+                <replica>
+                    <host>server02</host>
+                    <port>9001</port>
+                    <user>default</user>
+                    <password></password>
+                </replica>
+            </shard>
+        </cluster>
+    </remote_servers>
+    <zookeeper-servers>
+        <node index="1">
+            <host>server01</host>
+            <port>2181</port>
+        </node>
+        <node index="2">
+            <host>server02</host>
+            <port>2181</port>
+        </node>
+        <node index="3">
+            <host>server03</host>
+            <port>2181</port>
+        </node>
+    </zookeeper-servers>
+    <!-- 数据压缩算法  -->
+    <clickhouse_compression>
+        <case>
+            <min_part_size>10000000000</min_part_size>
+            <min_part_size_ratio>0.01</min_part_size_ratio>
+            <method>lz4</method>
+        </case>
+    </clickhouse_compression>
+</clickhouse>

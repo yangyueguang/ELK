@@ -1,0 +1,123 @@
+version: '3'
+services:
+  zookeeper:
+    image: zookeeper
+    restart: always
+    deploy:
+      mode: global
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    extra_hosts:
+      - "zoo1:192.168.3.119"
+      - "zoo2:192.168.3.203"
+      - "zoo3:192.168.2.246"
+    environment:
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+#      ZOO_MY_ID: 3  # 每个机器写不一样的数
+  ck1:
+    image: yandex/clickhouse-server
+    user: root
+    restart: always
+    hostname: server01
+    privileged: true
+    deploy:
+      mode: global
+    ports:
+      - 9000:9000
+      - 8123:8123
+      - 9009:9009
+    extra_hosts:
+      - "server01:192.168.3.119"
+      - "server02:192.168.3.203"
+      - "server03:192.168.2.246"
+    volumes:
+      - ./clickhouse/etc/config.d:/etc/clickhouse-server/config.d
+      - ./clickhouse/data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    depends_on:
+      - zookeeper
+  ck2:
+    image: yandex/clickhouse-server
+    user: root
+    restart: always
+    hostname: server02
+    privileged: true
+    deploy:
+      mode: global
+    ports:
+      - 9001:9000
+      - 8124:8123
+      - 9010:9009
+    extra_hosts:
+      - "server01:192.168.3.119"
+      - "server02:192.168.3.203"
+      - "server03:192.168.2.246"
+    volumes:
+      - ./clickhouse/etc/config.d:/etc/clickhouse-server/config.d
+      - ./clickhouse/data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    depends_on:
+      - zookeeper
+  ray-head:
+    image: ray
+    network_mode: host
+    shm_size: '8gb'
+    extra_hosts:
+      - "ray-head:0.0.0.0"
+    entrypoint: ["/bin/sh","-c"]
+    command:
+      - |
+        ray start --head --port=6379 --dashboard-host='0.0.0.0' --include-dashboard=true --object-manager-port=8076 
+        python3 start.py
+    ports:
+      - 8265:8265
+      - 8000:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 200M
+      placement:
+        constraints:
+          - node.role == manager
+  ray-worker:
+    image: ray
+    shm_size: '8gb'
+    network_mode: host
+    entrypoint: ["/bin/sh","-c"]
+    ports:
+      - 8000-8003:8000
+    volumes:
+      - share_data:/data
+    command:
+      - |
+        ray start --address='ray-head:6379'
+        python3 start.py
+    depends_on:
+        - ray-head
+    deploy:
+      replicas: 3
+      placement:
+        constraints:
+          - node.role == worker
+          # - node.hostname == ray-worker1 # 这个约束依据docker node ls里面的hostname
+volumes:
+  share_data:
+    driver: local
+  share-nfs:
+    driver: local
+    driver_opts:
+      type: "nfs"
+      o: "addr=192.168.1.160,rw"
+      device: ":/data/share"

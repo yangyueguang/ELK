@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<yandex>
+    <profiles>
+        <default>
+            <max_memory_usage>10000000000</max_memory_usage>
+            <use_uncompressed_cache>0</use_uncompressed_cache>
+            <load_balancing>random</load_balancing>
+            <input_format_import_nested_json>1</input_format_import_nested_json>
+            <allow_experimental_map_type>1</allow_experimental_map_type>
+        </default>
+        <readonly>
+            <max_memory_usage>10000000000</max_memory_usage>
+            <use_uncompressed_cache>0</use_uncompressed_cache>
+            <load_balancing>random</load_balancing>
+            <readonly>1</readonly>
+        </readonly>
+    </profiles>
+    <quotas>
+        <default>
+            <interval>
+                <duration>3600</duration>
+                <queries>0</queries>
+                <errors>0</errors>
+                <result_rows>0</result_rows>
+                <read_rows>0</read_rows>
+                <execution_time>0</execution_time>
+            </interval>
+        </default>
+    </quotas>
+    <users>
+        <default>
+            <!-- <password></password>-->
+            <password_sha256_hex>9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08</password_sha256_hex>
+            <networks incl="networks" replace="replace"><ip>::/0</ip></networks>
+            <profile>default</profile>
+            <quota>default</quota>
+        </default>
+        <ck>
+            <password_sha256_hex>9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08</password_sha256_hex>
+            <networks incl="networks" replace="replace"><ip>::/0</ip></networks>
+            <profile>readonly</profile>
+            <quota>default</quota>
+        </ck>
+    </users>
+</yandex>
+        <!--        # users.xml中的密码需要自定义，建议使用加密的方式填写-->
+        <!--        # 生成密文的方法-->
+        <!--        PASSWORD=admin-->
+        <!--        PASSWORD=$(base64 < /dev/urandom | head -c8); echo "$PASSWORD";echo -n "$PASSWORD" | sha256sum | tr -d '-'-->
